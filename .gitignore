@@ -30,4 +30,14 @@ tests/_output/*
 tests/_support/_generated
 
 #vagrant folder
-/.vagrant
+/.vagrantvendor/
+vendorNew/
+runtime/
+web/assets/
+web/uploads/
+*.log
+web/uploads/
+*.jpg
+*.png
+*.pdf
+*.docx

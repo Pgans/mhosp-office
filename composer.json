@@ -20,13 +20,18 @@
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "yii2mod/yii2-editable": "*",
         "kartik-v/yii2-grid": "@dev",
-        "kartik-v/yii2-editable": "dev-master",
         "yiisoft/yii2-bootstrap4": "@dev",
         "phpoffice/phpexcel": "dev-master",
         "kartik-v/yii2-widget-activeform": "@dev",
         "kartik-v/yii2-widgets": "^1.0@dev",
         "yiisoft/yii2-jui": "^2.0@dev",
-        "miloschuman/yii2-highcharts-widget": "dev-master"
+        "miloschuman/yii2-highcharts-widget": "dev-master",
+		"kartik-v/yii2-editable": "@dev",
+        "fedemotta/yii2-widget-datatables": "*",
+        "kartik-v/yii2-tabs-x": "dev-master",
+        "yii2mod/yii2-sweet-alert": "dev-master",
+        "2amigos/yii2-date-time-picker-widget": "~1.0",
+        "2amigos/yii2-date-picker-widget": "~1.0"
        
     },
     "require-dev": {
@@ -43,6 +48,9 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
         }
     },
     "scripts": {

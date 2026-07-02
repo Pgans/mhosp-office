@@ -19,7 +19,10 @@ class Lsubfund extends \yii\db\ActiveRecord
     {
         return 'l_subfund';
     }
-
+    public static function getDb()
+    {
+        return Yii::$app->get('db1');
+    }
     /**
      * @inheritdoc
      */

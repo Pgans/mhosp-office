@@ -11,17 +11,22 @@ $this->title = 'Rep-List';
 // Assuming today is March 10th, 2001, 5:16:18 pm, and that we are in the
 // Mountain Standard Time (MST) Time Zone
 
-
-                 echo '<p align="center">รายงานข้อมูลการเคลมตามกองทุน  </p>';
-              
+?>
+                 <p align="center">รายงานข้อมูลการเคลมตามกองทุน  </p>';
+ <p>
+	<input class="btn btn-primary" name="btnButton" type="button" value="Print Results" onClick="JavaScript:window.print();"> 
+           <?php echo Html::a('ส่งการเงิน', ['rep/rep2'], ['class' => 'btn btn-success', 'style' => 'margin-left:5px','target'=>'_blank']); ?>
+           <?php echo Html::a('ผลงานเคลม', ['rep/rep3'], ['class' => 'btn btn-info', 'style' => 'margin-left:5px','target'=>'_blank']); ?>           
             
-echo GridView::widget([
+ </p>
+    
+<?=  GridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
-    'panel' => [
+    //'filterModel' => $searchModel,
+    /*'panel' => [
         'before'=>'<a>รายงานข้อมูลE-Claim แยกตามREP  ประจำเดือน</a> '.date('Y-m'),
         'after'=>'ประมวลผล '.date('Y-m-d H:i:s')
-        ],
+        ],*/
         'showPageSummary' => true,
         'columns' => [
                // ['class' => 'yii\grid\SerialColumn'],
@@ -94,19 +99,16 @@ echo GridView::widget([
                 ],
                 ]
                 ]);
-                
-                  ?>   
-         <input class="btn btn-primary" name="btnButton" type="button" value="Print Results" onClick="JavaScript:window.print();">
-           <?php echo Html::a('ส่งการเงิน', ['rep/rep2'], ['class' => 'btn btn-success', 'style' => 'margin-left:5px','target'=>'_blank']); ?>
-          <?php echo Html::a('ผลงานเคลม', ['rep/rep3'], ['class' => 'btn btn-info', 'style' => 'margin-left:5px','target'=>'_blank']); ?>   
-        
-      </div>
-        <div>
-                <?php
+             
                 echo '<p align = "center">....................................</p> ';
                  echo '<p align = "center">นางสายใจ   บุญทา</p> ';
                  echo '<p align="center">ตำแหน่งเจ้าพนักงานเวชสถิติปฏิบัติงาน</p>';
-                ?>
-        </div>
+  
+                
+                  ?>   
+          
+        
+      </div>
+        
 
         <!-- <div class="alert alert-danger"><?=$sql?> </div> -->

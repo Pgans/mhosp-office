@@ -120,6 +120,14 @@ class Rep extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('db1');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function rules()
@@ -131,7 +139,7 @@ class Rep extends \yii\db\ActiveRecord
             [['HN', 'AN', 'RECNO', 'RESNO', 'OPDSEQ'], 'string', 'max' => 15],
             [['DATEADM', 'DATEDSC', 'AEDATE', 'DATETIMEADJ', 'EPAC_ID', 'REP'], 'string', 'max' => 10],
             [['TIMEADM', 'TIMEDSC', 'AETIME', 'ALERT_TIME'], 'string', 'max' => 4],
-            [['PERSON_TYPE', 'TITLES', 'DOB', 'WEIGHT', 'AGE', 'AGE_MM', 'MARRY_STATUS', 'DEMAND_CLAIM_OPD', 'DEMAND_CLAIM_IPD', 'REFER_IN_CAUSE', 'REFER_OUT_CAUSE', 'REFERCODE', 'LOS', 'SVCTYPE', 'UUC', 'AETYPE', 'HC', 'PDX', 'SUMS_HC', 'SUMS_PPCOM', 'TOTALPAID', 'TOTALEXPPAID', 'TOTALEMERPAID', 'DRG', 'RW', 'ADJRW', 'DRG_NHSO', 'RW_NHSO', 'ADJRW_NHSO', 'SOURCE', 'CHKFLAG', 'DATE_SEND', 'DATA_TYPE', 'TYPE_RETURN', 'TIME_STAMP'], 'string', 'max' => 50],
+            [['PERSON_TYPE', 'TITLES', 'DOB', 'WEIGHT', 'AGE', 'AGE_MM', 'MARRY_STATUS', 'DEMAND_CLAIM_OPD', 'DEMAND_CLAIM_IPD', 'REFER_IN_CAUSE', 'REFER_OUT_CAUSE', 'REFERCODE', 'LOS', 'SVCTYPE', 'UUC', 'AETYPE', 'HC', 'PDX', 'SUMS_HC', 'SUMS_PPCOM', 'SUMS_SERVICEITEM', 'TOTALPAID', 'TOTALEXPPAID', 'TOTALEMERPAID', 'DRG', 'RW', 'ADJRW', 'DRG_NHSO', 'RW_NHSO', 'ADJRW_NHSO', 'SOURCE', 'CHKFLAG', 'DATE_SEND', 'DATA_TYPE', 'TYPE_RETURN', 'TIME_STAMP'], 'string', 'max' => 50],
             [['PID', 'OWNRIGHTPID'], 'string', 'max' => 13],
             [['IDTYPE', 'SEX', 'REFER_STATUS', 'STATUS', 'RELATE_INSCL', 'CONTRACT_TYPE', 'AESTATUS'], 'string', 'max' => 1],
             [['NATIONS', 'CLAIM_C', 'CLAIM_T'], 'string', 'max' => 100],
@@ -141,7 +149,6 @@ class Rep extends \yii\db\ActiveRecord
             [['DOCNO'], 'string', 'max' => 30],
             [['HASH'], 'string', 'max' => 24],
             [['ALERT_DATE'], 'string', 'max' => 8],
-            [['SUMS_SERVICEITEM'], 'integer'],
             [['ECLAIM_NO'], 'unique'],
             [['ECLAIM_NO', 'HCODE', 'HN', 'DATEADM', 'TIMEADM', 'PERSON_TYPE', 'PID'], 'unique', 'targetAttribute' => ['ECLAIM_NO', 'HCODE', 'HN', 'DATEADM', 'TIMEADM', 'PERSON_TYPE', 'PID']],
         ];

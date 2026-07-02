@@ -16,7 +16,7 @@ $this->title = 'Adjrw';
 
 echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+       // 'filterModel' => $searchModel,
         'panel' => [
             'before'=>'<a>รายงานข้อมูลE-Claim IPCS ADJRW จากสปสช.  ประจำเดือน</a> '.date('Y-m'),
             'after'=>'ประมวลผลปีงบประมาณ2563 จาก 1 ตุลาคม2562  ถึง  30 กันยายน 2563',
@@ -35,7 +35,7 @@ echo GridView::widget([
                 },       
                     ],
                     [
-                        'attribute' => 'NAME',
+                        'attribute' => 'INSCL_NAME',
                         'label'=>'สิทธิการพยาบาล',
                        'headerOptions'=>[ 'style'=>'background-color:#D2B4DE'] ,
                        

@@ -64,7 +64,7 @@ $this->title = 'rep E-Claim';
 <?php
 echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+       // 'filterModel' => $searchModel,
         'panel' => [
             'before'=>'<a>รายงานข้อมูลE-Claim แยกตามREP  ประจำเดือน</a> '.date('Y-m'),
             'after'=>'ประมวลผล '.date('Y-m-d H:i:s')

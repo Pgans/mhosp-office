@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - IT Request System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .requests-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .request-card {
+            padding: 25px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background 0.2s;
+        }
+
+        .request-card:hover {
+            background: #f8f9fa;
+        }
+
+        .request-card:last-child {
+            border-bottom: none;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ticket-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .timestamp {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .request-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-update {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .priority-input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            width: 80px;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inprogress {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #667eea;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Sarabun', Arial, sans-serif;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .workload-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .workload-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .workload-card h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .workload-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .workload-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .workload-item.todo {
+            background: #fff3cd;
+        }
+
+        .workload-item.inprogress {
+            background: #cce5ff;
+        }
+
+        .workload-item.completed {
+            background: #d4edda;
+        }
+
+        .workload-item.cancelled {
+            background: #f8d7da;
+        }
+
+        .workload-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .workload-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .workload-total {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+        }
+
+        .workload-total .workload-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .workload-total .workload-number {
+            color: white;
+        }
+
+        .staff-dropdown {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Sarabun', Arial, sans-serif;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .staff-dropdown:hover {
+            border-color: #667eea;
+        }
+
+        .staff-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Admin Panel - IT Request System</h1>
+            <p>จัดการคำขอใช้งานโปรแกรม</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>รอการอนุมัติ</h3>
+                <div class="number" id="pendingCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>รอดำเนินการ</h3>
+                <div class="number" id="todoCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>กำลังดำเนินการ</h3>
+                <div class="number" id="inprogressCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>เสร็จสิ้น</h3>
+                <div class="number" id="completedCount">0</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab" onclick="showTab('dashboard')">📊 Dashboard</div>
+            <div class="tab active" onclick="showTab('pending')">📋 รอการอนุมัติ</div>
+            <div class="tab" onclick="showTab('approved')">✅ อนุมัติแล้ว</div>
+        </div>
+
+        <!-- ✨ Dashboard Section (ใหม่!) -->
+        <div id="dashboardSection" class="content-section">
+            <h2 style="margin-bottom: 20px; color: #333;">📊 Dashboard ปริมาณงานของเจ้าหน้าที่ IT</h2>
+            <div id="workloadStats" class="workload-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>กำลังโหลดข้อมูล...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="pendingSection" class="content-section active">
+            <div class="requests-container">
+                <div id="pendingRequests" class="loading">
+                    กำลังโหลดข้อมูล...
+                </div>
+            </div>
+        </div>
+
+        <div id="approvedSection" class="content-section">
+            <div class="requests-container">
+                <div id="approvedRequests" class="loading">
+                    กำลังโหลดข้อมูล...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับอนุมัติ -->
+    <div id="approveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>อนุมัติคำขอ</h2>
+            </div>
+            <div class="form-group">
+                <label>Ticket ID</label>
+                <input type="text" id="approveTicketID" readonly>
+            </div>
+            <div class="form-group">
+                <label>ลำดับความสำคัญ (1 = สำคัญที่สุด)</label>
+                <input type="number" id="approvePriority" min="1" value="1">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeApproveModal()">ยกเลิก</button>
+                <button class="btn btn-approve" onclick="confirmApprove()">อนุมัติ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับอัปเดตสถานะ -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>อัปเดตสถานะ</h2>
+            </div>
+            <div class="form-group">
+                <label>Ticket ID</label>
+                <input type="text" id="updateTicketID" readonly>
+            </div>
+            <div class="form-group">
+                <label>สถานะ</label>
+                <select id="updateStatus">
+                    <option value="รอดำเนินการ">รอดำเนินการ</option>
+                    <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                    <option value="เสร็จสิ้น">เสร็จสิ้น</option>
+                    <option value="ยกเลิก">ยกเลิก</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ลำดับความสำคัญ</label>
+                <input type="number" id="updatePriority" min="1">
+            </div>
+            <div class="form-group">
+                <label>หมายเหตุ</label>
+                <textarea id="updateNote" rows="3"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeUpdateModal()">ยกเลิก</button>
+                <button class="btn btn-update" onclick="confirmUpdate()">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ ต้องแทนที่ URL นี้ด้วย Web App URL ของคุณ
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgGMQUYX3llNa625mvGlJeOfo7Z7OCiMPY4Y_ggj9yijWR9O1cEpVEyH69Xsqw_9hdbg/exec';
+
+        let currentApproveTicket = null;
+        let currentUpdateTicket = null;
+
+        // โหลดข้อมูลเมื่อเปิดหน้า
+       document.addEventListener('DOMContentLoaded', async function() {
+            await loadITStaff();
+             showTab('dashboard'); // เริ่มที่ Dashboard
+             updateStats();
+});
+
+        // สลับ Tab
+        function showTab(tab) {
+            // ซ่อนทุก section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // ซ่อนทุก tab
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+
+            // แสดง section และ tab ที่เลือก
+            if (tab === 'dashboard') {
+                document.getElementById('dashboardSection').classList.add('active');
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                loadDashboard();
+            } else if (tab === 'pending') {
+                document.getElementById('pendingSection').classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                loadPendingRequests();
+            } else if (tab === 'approved') {
+                document.getElementById('approvedSection').classList.add('active');
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                loadApprovedRequests();
+            }
+        }
+
+
+        // โหลดคำขอที่รอการอนุมัติ
+        async function loadPendingRequests() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?action=getPending');
+                const result = await response.json();
+
+                const container = document.getElementById('pendingRequests');
+
+                if (!result.success || result.data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>ไม่มีคำขอที่รอการอนุมัติ</h3>
+                            <p>รายการจะแสดงที่นี่เมื่อมี User ส่งคำขอเข้ามา</p>
+                        </div>
+                    `;
+                    document.getElementById('pendingCount').textContent = '0';
+                    return;
+                }
+
+                document.getElementById('pendingCount').textContent = result.data.length;
+
+                container.innerHTML = result.data.map(req => `
+                    <div class="request-card">
+                        <div class="request-header">
+                            <div class="ticket-id">${req['Ticket_ID']}</div>
+                            <div class="timestamp">${formatDate(req['วันที่-เวลาที่ขอ'])}</div>
+                        </div>
+                        
+                        <div class="request-info">
+                            <div class="info-item">
+                                <div class="info-label">ผู้ขอ</div>
+                                <div class="info-value">${req['ชื่อ-สกุล']}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">แผนก</div>
+                                <div class="info-value">${req['แผนก']}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">โปรแกรม/รายละเอียด</div>
+                                <div class="info-value">${req['โปรแกรม/รายละเอียด']}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">เงื่อนไข</div>
+                                <div class="info-value">${req['เงื่อนไข']}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">ตัวแปรสำคัญ</div>
+                                <div class="info-value">${req['ตัวแปรสำคัญ']}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">หน่วยงานที่อาจได้รับผลกระทบ</div>
+                                <div class="info-value">${req['หน่วยงานที่อาจได้รับผลกระทบ']}</div>
+                            </div>
+                            ${req['ไฟล์แนบ'] ? `
+                            <div class="info-item">
+                                <div class="info-label">ไฟล์แนบ</div>
+                                <div class="info-value">${formatFileLinks(req['ไฟล์แนบ'])}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="request-actions">
+                            <button class="btn btn-approve" onclick="showApproveModal('${req['Ticket_ID']}')">
+                                ✅ อนุมัติ
+                            </button>
+                            <button class="btn btn-reject" onclick="rejectRequest('${req['Ticket_ID']}')">
+                                ❌ ปฏิเสธ
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('pendingRequests').innerHTML = `
+                    <div class="empty-state">
+                        <h3>เกิดข้อผิดพลาด</h3>
+                        <p>ไม่สามารถโหลดข้อมูลได้</p>
+                    </div>
+                `;
+            }
+        }
+
+        // โหลดคำขอที่อนุมัติแล้ว
+        async function loadApprovedRequests() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?action=getApproved');
+                const result = await response.json();
+
+                const container = document.getElementById('approvedRequests');
+
+                if (!result.success || result.data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>ยังไม่มีรายการที่อนุมัติ</h3>
+                            <p>รายการที่อนุมัติแล้วจะแสดงที่นี่</p>
+                        </div>
+                    `;
+                    updateStatusCounts([]);
+                    return;
+                }
+
+                updateStatusCounts(result.data);
+
+                container.innerHTML = result.data.map(req => {
+                    const statusClass = getStatusClass(req['สถานะ']);
+                    return `
+                        <div class="request-card">
+                            <div class="request-header">
+                                <div>
+                                    <div class="ticket-id">${req['Ticket_ID']}</div>
+                                    <span class="priority-badge">ลำดับที่ ${req['ลำดับความสำคัญ']}</span>
+                                    <span class="status-badge ${statusClass}">${req['สถานะ']}</span>
+                                </div>
+                                <div class="timestamp">${formatDate(req['วันที่-เวลาที่ขอ'])}</div>
+                            </div>
+                            
+                            <div class="request-info">
+                                <div class="info-item">
+                                    <div class="info-label">ผู้ขอ</div>
+                                    <div class="info-value">${req['ชื่อ-สกุล']}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">แผนก</div>
+                                    <div class="info-value">${req['แผนก']}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">โปรแกรม/รายละเอียด</div>
+                                    <div class="info-value">${req['โปรแกรม/รายละเอียด']}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">เงื่อนไข</div>
+                                    <div class="info-value">${req['เงื่อนไข']}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">ตัวแปรสำคัญ</div>
+                                    <div class="info-value">${req['ตัวแปรสำคัญ']}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">หน่วยงานที่อาจได้รับผลกระทบ</div>
+                                    <div class="info-value">${req['หน่วยงานที่อาจได้รับผลกระทบ']}</div>
+                                </div>
+                                ${req['ไฟล์แนบ'] ? `
+                                <div class="info-item">
+                                    <div class="info-label">ไฟล์แนบ</div>
+                                    <div class="info-value">${formatFileLinks(req['ไฟล์แนบ'])}</div>
+                                </div>
+                                ` : ''}
+                                ${req['หมายเหตุจาก IT'] ? `
+                                <div class="info-item">
+                                    <div class="info-label">หมายเหตุจาก IT</div>
+                                    <div class="info-value">${req['หมายเหตุจาก IT']}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="request-actions">
+                                <!-- ✨ Dropdown เจ้าหน้าที่ IT (ใหม่!) -->
+                                <select class="staff-dropdown" 
+                                        id="staff-${req['Ticket_ID']}" 
+                                        onchange="assignStaff('${req['Ticket_ID']}', this.value)">
+                                    <option value="">-- เลือกเจ้าหน้าที่ IT --</option>
+                                </select>
+                                
+                                <button class="btn btn-update" onclick="showUpdateModal('${req['Ticket_ID']}', ${req['ลำดับความสำคัญ']}, '${req['สถานะ']}', '${(req['หมายเหตุจาก IT'] || '').replace(/'/g, "\'")}')">
+                                    📝 อัปเดต
+                                </button>
+                            </div>
+
+                        </div>
+                    `;
+                }).join('');
+
+                result.data.forEach(req => {
+                    populateStaffDropdown(req['Ticket_ID'], req['เจ้าหน้าที่รับผิดชอบ']);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('approvedRequests').innerHTML = `
+                    <div class="empty-state">
+                        <h3>เกิดข้อผิดพลาด</h3>
+                        <p>ไม่สามารถโหลดข้อมูลได้</p>
+                    </div>
+                `;
+            }
+        }
+
+
+        // แสดง Modal อนุมัติ
+        function showApproveModal(ticketID) {
+            currentApproveTicket = ticketID;
+            document.getElementById('approveTicketID').value = ticketID;
+            document.getElementById('approvePriority').value = 1;
+            document.getElementById('approveModal').classList.add('show');
+        }
+
+        // ปิด Modal อนุมัติ
+        function closeApproveModal() {
+            document.getElementById('approveModal').classList.remove('show');
+            currentApproveTicket = null;
+        }
+
+        // ยืนยันการอนุมัติ
+        async function confirmApprove() {
+            const priority = document.getElementById('approvePriority').value;
+            const ticketID = currentApproveTicket;
+
+            try {
+                // เรียกใช้ API ผ่าน URL
+                const url = `${SCRIPT_URL}?action=approve&ticketID=${encodeURIComponent(ticketID)}&priority=${priority}`;
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('อนุมัติคำขอเรียบร้อย');
+                    closeApproveModal();
+                    loadPendingRequests();
+                    loadApprovedRequests();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + (result.message || 'ไม่สามารถอนุมัติได้'));
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+        }
+
+        // ปฏิเสธคำขอ
+        async function rejectRequest(ticketID) {
+            if (!confirm('คุณต้องการปฏิเสธคำขอนี้ใช่หรือไม่?')) {
+                return;
+            }
+
+            try {
+                const url = `${SCRIPT_URL}?action=reject&ticketID=${encodeURIComponent(ticketID)}`;
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('ปฏิเสธคำขอเรียบร้อย');
+                    loadPendingRequests();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + (result.message || 'ไม่สามารถปฏิเสธได้'));
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+        }
+
+        // แสดง Modal อัปเดต
+        function showUpdateModal(ticketID, priority, status, note) {
+            currentUpdateTicket = ticketID;
+            document.getElementById('updateTicketID').value = ticketID;
+            document.getElementById('updatePriority').value = priority;
+            document.getElementById('updateStatus').value = status;
+            document.getElementById('updateNote').value = note;
+            document.getElementById('updateModal').classList.add('show');
+        }
+
+        // ปิด Modal อัปเดต
+        function closeUpdateModal() {
+            document.getElementById('updateModal').classList.remove('show');
+            currentUpdateTicket = null;
+        }
+
+        // ยืนยันการอัปเดต
+        async function confirmUpdate() {
+            const status = document.getElementById('updateStatus').value;
+            const priority = document.getElementById('updatePriority').value;
+            const note = document.getElementById('updateNote').value;
+            const ticketID = currentUpdateTicket;
+
+            try {
+                // อัปเดตสถานะ
+                const statusUrl = `${SCRIPT_URL}?action=updateStatus&ticketID=${encodeURIComponent(ticketID)}&status=${encodeURIComponent(status)}&note=${encodeURIComponent(note)}`;
+                const statusResponse = await fetch(statusUrl);
+                const statusResult = await statusResponse.json();
+
+                if (!statusResult.success) {
+                    alert('เกิดข้อผิดพลาด: ' + (statusResult.message || 'ไม่สามารถอัปเดตสถานะได้'));
+                    return;
+                }
+
+                // อัปเดตลำดับความสำคัญ
+                const priorityUrl = `${SCRIPT_URL}?action=updatePriority&ticketID=${encodeURIComponent(ticketID)}&priority=${priority}`;
+                const priorityResponse = await fetch(priorityUrl);
+                const priorityResult = await priorityResponse.json();
+
+                if (priorityResult.success) {
+                    alert('อัปเดตข้อมูลเรียบร้อย');
+                    closeUpdateModal();
+                    loadApprovedRequests();
+                } else {
+                    alert('อัปเดตสถานะสำเร็จ แต่ไม่สามารถอัปเดตลำดับความสำคัญได้');
+                    closeUpdateModal();
+                    loadApprovedRequests();
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+        }
+
+        // ฟอร์แมตวันที่
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleString('th-TH', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // กำหนด CSS class ตามสถานะ
+        function getStatusClass(status) {
+            if (status === 'รอดำเนินการ') return 'status-pending';
+            if (status === 'กำลังดำเนินการ') return 'status-inprogress';
+            if (status === 'เสร็จสิ้น') return 'status-completed';
+            return 'status-pending';
+        }
+
+        // อัปเดตจำนวนตามสถานะ
+        function updateStatusCounts(data) {
+            const counts = {
+                'รอดำเนินการ': 0,
+                'กำลังดำเนินการ': 0,
+                'เสร็จสิ้น': 0
+            };
+
+            data.forEach(req => {
+                if (counts.hasOwnProperty(req['สถานะ'])) {
+                    counts[req['สถานะ']]++;
+                }
+            });
+
+            document.getElementById('todoCount').textContent = counts['รอดำเนินการ'];
+            document.getElementById('inprogressCount').textContent = counts['กำลังดำเนินการ'];
+            document.getElementById('completedCount').textContent = counts['เสร็จสิ้น'];
+        }
+
+        // แปลง file links string เป็น HTML links
+        function formatFileLinks(fileLinksStr) {
+            if (!fileLinksStr) return '';
+
+            const lines = fileLinksStr.split('\n');
+            return lines.map(line => {
+                const match = line.match(/^(.+?):\s*(.+)$/);
+                if (match) {
+                    const fileName = match[1];
+                    const url = match[2];
+                    return `<a href="${url}" target="_blank" style="display: block; color: #667eea; text-decoration: none; margin-bottom: 5px;">📎 ${fileName}</a>`;
+                }
+                return line;
+            }).join('');
+        }
+        // ตัวแปรเก็บรายชื่อเจ้าหน้าที่
+        let itStaffList = [];
+
+        // โหลดรายชื่อเจ้าหน้าที่ IT
+        async function loadITStaff() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getITStaff`);
+                const result = await response.json();
+
+                if (result.success) {
+                    itStaffList = result.data;
+                }
+            } catch (error) {
+                console.error('Error loading IT staff:', error);
+            }
+        }
+
+        // กรอก dropdown เจ้าหน้าที่
+        function populateStaffDropdown(ticketID, currentStaff) {
+            const dropdown = document.getElementById(`staff-${ticketID}`);
+            if (!dropdown) return;
+
+            // เคลียร์ options
+            dropdown.innerHTML = '<option value="">-- เลือกเจ้าหน้าที่ --</option>';
+
+            // เพิ่ม options จากรายชื่อ
+            itStaffList.forEach(staff => {
+                const option = document.createElement('option');
+                option.value = staff.name;
+                option.textContent = staff.name;
+                if (staff.name === currentStaff) {
+                    option.selected = true;
+                }
+                dropdown.appendChild(option);
+            });
+        }
+
+        // กำหนดเจ้าหน้าที่รับผิดชอบ
+        async function assignStaff(ticketID, staffName) {
+            if (!staffName) {
+                alert('กรุณาเลือกเจ้าหน้าที่');
+                return;
+            }
+
+            if (!confirm(`ต้องการกำหนดให้ ${staffName} รับผิดชอบงาน ${ticketID} ใช่หรือไม่?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=assignStaff&ticketID=${encodeURIComponent(ticketID)}&staffName=${encodeURIComponent(staffName)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ กำหนดเจ้าหน้าที่เรียบร้อย');
+                    loadApprovedRequests();
+                    loadDashboard();
+                } else {
+                    alert('❌ เกิดข้อผิดพลาด: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error assigning staff:', error);
+                alert('❌ ไม่สามารถกำหนดเจ้าหน้าที่ได้');
+            }
+        }
+
+        // โหลด Dashboard
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getITStaffWorkload`);
+                const result = await response.json();
+
+                if (result.success) {
+                    displayDashboard(result.data);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // แสดง Dashboard
+        function displayDashboard(workload) {
+            const container = document.getElementById('workloadStats');
+
+            if (Object.keys(workload).length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">ยังไม่มีข้อมูล</p>';
+                return;
+            }
+
+            let html = '';
+
+            Object.keys(workload).sort().forEach(staffName => {
+                const stats = workload[staffName];
+
+                html += `
+            <div class="workload-card">
+                <h3>👤 ${staffName}</h3>
+                <div class="workload-stats">
+                    <div class="workload-item todo">
+                        <div class="workload-label">รอดำเนินการ</div>
+                        <div class="workload-number">${stats.todo}</div>
+                    </div>
+                    <div class="workload-item inprogress">
+                        <div class="workload-label">กำลังดำเนินการ</div>
+                        <div class="workload-number">${stats.inprogress}</div>
+                    </div>
+                    <div class="workload-item completed">
+                        <div class="workload-label">เสร็จสิ้น</div>
+                        <div class="workload-number">${stats.completed}</div>
+                    </div>
+                    <div class="workload-item cancelled">
+                        <div class="workload-label">ยกเลิก</div>
+                        <div class="workload-number">${stats.cancelled}</div>
+                    </div>
+                    <div class="workload-item workload-total">
+                        <div class="workload-label">ทั้งหมด</div>
+                        <div class="workload-number">${stats.total}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+    </script>
+</body>
+
+</html>

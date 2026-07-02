@@ -1,0 +1,58 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "{{%log_dashboardall}}".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $ip
+ * @property string $patient_cid
+ * @property string $datetime
+ */
+class Logdashboardall extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%log_dashboardall}}';
+    }
+
+    /**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('db_log');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['datetime'], 'safe'],
+            [['username', 'ip', 'patient_cid'], 'string', 'max' => 255],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', 'Username'),
+            'ip' => Yii::t('app', 'Ip'),
+            'patient_cid' => Yii::t('app', 'Patient Cid'),
+            'datetime' => Yii::t('app', 'Datetime'),
+        ];
+    }
+}

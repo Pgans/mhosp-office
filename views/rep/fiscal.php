@@ -76,7 +76,7 @@ $this->title = 'ปีงบ';
                                         [
                                             'class'=>'kartik\grid\FormulaColumn',
                                             'label' => 'สิทธิการพยาบาล',
-                                            'attribute' => 'SUBFUND',
+                                            'attribute' => 'INSCL_NAME',
                                             'headerOptions'=>['style'=>'background-color:#FADBD8'],
                                             'pageSummary'=> 'รวม',
                                         ],
@@ -177,7 +177,7 @@ $this->title = 'ปีงบ';
                                         ],
                                         [
                                             'label' => 'สิทธิการพยาบาล',
-                                            'attribute' => 'SUB_FUND',
+                                            'attribute' => 'INSCL_NAME',
                                             'headerOptions'=>['style'=>'background-color:#FADBD8'],
                                             'pageSummary'=> 'รวม',
                                         ],

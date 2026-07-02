@@ -1,0 +1,6 @@
+/* assets/calendar.css */
+#calendar {
+    background-color: rgba(255, 255, 255, 0.8); /* ตัวอย่างสีขาวโปร่งใส */
+    border: 1px solid #ccc; /* ตัวอย่างเส้นขอบ */
+    /* กำหนดคุณสมบัติพื้นหลังอื่น ๆ ตามต้องการ */
+}

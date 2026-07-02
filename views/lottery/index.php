@@ -28,6 +28,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+		'class' => 'kartik\grid\EditableColumn',
+        'responsive'=>true,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 

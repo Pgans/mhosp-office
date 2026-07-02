@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="th"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบเชิญคัดกรองวัณโรค CXR/IGRA สำหรับผู้สัมผัสร่วมบ้าน</title>
+    <style>
+        body {
+            font-family: 'Sarabun', Arial, sans-serif;
+            margin: 10px;
+            background-color: #f8f9fa;
+            line-height: 1.2;
+            font-size: 12px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #d32f2f;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .logo-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .hospital-logo {
+            width: 40px;
+            height: 40px;
+            background-color: #d32f2f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .title {
+            color: #d32f2f;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 12px;
+            margin: 2px 0;
+        }
+        .form-section {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #d32f2f;
+        }
+        .form-section h3 {
+            font-size: 14px;
+            margin: 0 0 8px 0;
+        }
+        .form-group {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-right: 6px;
+            min-width: 110px;
+            font-size: 11px;
+        }
+        .form-group input, .form-group select {
+            border: none;
+            border-bottom: 1px solid #333;
+            background: transparent;
+            padding: 2px 6px;
+            font-size: 11px;
+            min-width: 160px;
+            margin: 1px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-bottom-color: #d32f2f;
+        }
+        .screening-info {
+            background-color: #e8f5e8;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #28a745;
+            margin-bottom: 10px;
+        }
+        .screening-info h3 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+        }
+        .screening-info p {
+            margin: 3px 0;
+            font-size: 11px;
+        }
+        .important-note {
+            background-color: #fff3cd;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #ffc107;
+            margin-bottom: 10px;
+        }
+        .important-note h3 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+        }
+        .contact-info {
+            background-color: #d1ecf1;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #17a2b8;
+            margin-bottom: 10px;
+        }
+        .contact-info h3 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+        }
+        .family-list {
+            margin-top: 8px;
+        }
+        .family-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+            padding: 4px;
+            background-color: white;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        .member-number {
+            background-color: #d32f2f;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        .print-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px 3px;
+        }
+        .print-button:hover {
+            background-color: #218838;
+        }
+        .signature-section {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .signature-box {
+            text-align: center;
+            width: 150px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 20px 0 6px 0;
+            height: 1px;
+        }
+        .signature-box p {
+            margin: 2px 0;
+            font-size: 10px;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                font-size: 12pt;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                margin: 0;
+                padding: 20px;
+            }
+            .print-button {
+                display: none !important;
+            }
+            .form-section, .screening-info, .important-note, .contact-info {
+                break-inside: avoid;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .header {
+                border-bottom: 3px solid #d32f2f !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="hospital-logo">รพ.</div>
+                <div>
+                    <h1 class="title">ใบเชิญคัดกรองวัณโรค</h1>
+                    <p class="subtitle">โรงพยาบาลม่วงสามสิบ</p>
+                    <p class="subtitle">การตรวจ CXR และ IGRA สำหรับผู้สัมผัสร่วมบ้าน</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 style="color: #d32f2f; margin-top: 0;">ข้อมูลผู้ป่วยวัณโรค</h3>
+            <div class="form-group">
+                <label>ชื่อ-นามสกุลผู้ป่วย:</label>
+                <input type="text" id="patientName" placeholder="กรอกชื่อ-นามสกุลผู้ป่วยวัณโรค">
+            </div>
+            <div class="form-group">
+                <label>HN:</label>
+                <input type="text" id="patientHN" placeholder="เลข HN">
+                <label style="margin-left: 15px;">วันที่ออกใบเชิญ:</label>
+                <input type="date" id="inviteDate" value="2025-07-30">
+            </div>
+            <div class="form-group">
+                <label>รพ.สต.ที่รับผิดชอบ:</label>
+                <input type="text" id="healthCenter" placeholder="กรอกชื่อ รพ.สต.ที่รับผิดชอบ">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 style="color: #d32f2f; margin-top: 0;">ข้อมูลสมาชิกในครอบครัว</h3>
+            <div class="form-group">
+                <label>ชื่อ-นามสกุลญาติ (ผู้ติดต่อ):</label>
+                <input type="text" id="relativeName" placeholder="กรอกชื่อ-นามสกุลญาติผู้ติดต่อ">
+            </div>
+            <div class="form-group">
+                <label>ความสัมพันธ์กับผู้ป่วย:</label>
+                <select id="relativeRelation">
+                    <option value="" selected="selected">เลือกความสัมพันธ์</option>
+                    <option value="สามี">สามี</option>
+                    <option value="ภรรยา">ภรรยา</option>
+                    <option value="บุตร">บุตร</option>
+                    <option value="บิดา">บิดา</option>
+                    <option value="มารดา">มารดา</option>
+                    <option value="พี่">พี่</option>
+                    <option value="น้อง">น้อง</option>
+                    <option value="ปู่">ปู่</option>
+                    <option value="ย่า">ย่า</option>
+                    <option value="ตา">ตา</option>
+                    <option value="ยาย">ยาย</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>จำนวนสมาชิกในบ้าน:</label>
+                <select id="familyCount" onchange="generateFamilyList()">
+                    <option value="" selected="selected">เลือกจำนวน</option>
+                    <option value="1">1 คน</option>
+                    <option value="2">2 คน</option>
+                    <option value="3">3 คน</option>
+                    <option value="4">4 คน</option>
+                    <option value="5">5 คน</option>
+                    <option value="6">6 คน</option>
+                    <option value="7">7 คน</option>
+                    <option value="8">8 คน</option>
+                    <option value="9">9 คน</option>
+                    <option value="10">10 คน</option>
+                </select>
+            </div>
+            
+            <div id="familyList" class="family-list"></div>
+        </div>
+
+        <div class="screening-info">
+            <h3 style="color: #28a745; margin-top: 0;">📋 การคัดกรองวัณโรค</h3>
+            <p><strong>สิ่งที่ต้องตรวจ:</strong> CXR (เอกซเรย์ปอด) + IGRA (ตรวจเลือด)</p>
+            <p><strong>📅 วันบริการ:</strong> ทุกวันพฤหัสบดี เวลา 08.00-16.00 น. <strong>💰 ฟรี</strong></p>
+            <p style="color: #d32f2f; font-weight: bold;">⚠️ นำมา: บัตรประชาชน + ใบเชิญนี้</p>
+        </div>
+
+        <div class="important-note">
+            <h3 style="color: #856404; margin-top: 0;">📢 การแจ้งผลตรวจ</h3>
+            <div style="background-color: white; padding: 6px; border-radius: 3px; margin-top: 5px; font-size: 11px;">
+                <p><strong>🔍 พบเชื้อ:</strong> รพ.แจ้งภายใน 2 สัปดาห์ (เจ้าหน้าที่แจ้งที่บ้าน หรือโทรแจ้ง)</p>
+                <p><strong>✅ ไม่พบเชื้อ:</strong> <span style="color: #28a745; font-weight: bold;">ไม่มีการติดต่อจาก รพ.</span> (หมายถึงปกติ)</p>
+                <p style="color: #d32f2f; font-weight: bold;">📋 หากพบเชื้อ: เจ้าหน้าที่ รพ.สต.จะออกเยี่ยมกำกับการกินยา DOT</p>
+            </div>
+        </div>
+
+        <div class="contact-info">
+            <h3 style="color: #17a2b8; margin-top: 0;">📞 ข้อมูลติดต่อ</h3>
+            <div class="form-group">
+                <label>เบอร์โทรผู้รับเชิญ:</label>
+                <input type="tel" id="contactPhone" placeholder="กรอกเบอร์โทรติดต่อกลับ">
+            </div>
+            <div style="background-color: white; padding: 6px; border-radius: 3px; margin-top: 6px; font-size: 11px;">
+                <p><strong>📱 เบอร์ รพ.:</strong> <span style="font-size: 14px; color: #d32f2f; font-weight: bold;">061-421-9229</span> (งานวัณโรค)</p>
+                <p style="color: #666; font-size: 10px; margin: 0;">ทุกวันพฤหัสบดี 08.00-16.30 น.</p>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <p>ลงชื่อ ผู้รับเชิญ</p>
+                <p>วันที่ ......../......../........</p>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <p>ลงชื่อ เจ้าหน้าที่</p>
+                <p>วันที่ ......../......../........</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <button class="print-button" onclick="printInvitation()">🖨️ พิมพ์ใบเชิญ</button>
+            <button class="print-button" onclick="resetForm()" style="background-color: #6c757d;">🔄 รีเซ็ต</button>
+        </div>
+    </div>
+
+    <script>
+        function generateFamilyList() {
+            const count = parseInt(document.getElementById('familyCount').value);
+            const familyListDiv = document.getElementById('familyList');
+            
+            if (!count) {
+                familyListDiv.innerHTML = '';
+                return;
+            }
+            
+            let html = '            <h4 style="color: #d32f2f; font-size: 12px; margin-bottom: 5px;">รายชื่อสมาชิกในครอบครัวที่ต้องมาตรวจ:</h4>';
+            
+            for (let i = 1; i <= count; i++) {
+                html += `
+                    <div class="family-member">
+                        <div class="member-number">${i}</div>
+                        <div style="flex: 1;">
+                            <input type="text" placeholder="ชื่อ-นามสกุล" style="width: 140px; margin-right: 5px; font-size: 10px;">
+                            <input type="number" placeholder="อายุ" style="width: 40px; margin-right: 5px; font-size: 10px;">
+                            <select style="width: 80px; font-size: 10px;">
+                                <option value="">ความสัมพันธ์</option>
+                                <option value="สามี">สามี</option>
+                                <option value="ภรรยา">ภรรยา</option>
+                                <option value="บุตร">บุตร</option>
+                                <option value="บิดา">บิดา</option>
+                                <option value="มารดา">มารดา</option>
+                                <option value="พี่">พี่</option>
+                                <option value="น้อง">น้อง</option>
+                                <option value="ปู่">ปู่</option>
+                                <option value="ย่า">ย่า</option>
+                                <option value="ตา">ตา</option>
+                                <option value="ยาย">ยาย</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            familyListDiv.innerHTML = html;
+        }
+
+        function printInvitation() {
+            // ตรวจสอบข้อมูลพื้นฐาน
+            const patientName = document.getElementById('patientName').value;
+            const familyCount = document.getElementById('familyCount').value;
+            
+            if (!patientName) {
+                alert('กรุณากรอกชื่อผู้ป่วยก่อนพิมพ์');
+                return;
+            }
+            
+            if (!familyCount) {
+                alert('กรุณาเลือกจำนวนสมาชิกในครอบครัวก่อนพิมพ์');
+                return;
+            }
+            
+            // ตั้งค่าวันที่ปัจจุบันถ้ายังไม่ได้กรอก
+            const inviteDate = document.getElementById('inviteDate');
+            if (!inviteDate.value) {
+                const today = new Date().toISOString().split('T')[0];
+                inviteDate.value = today;
+            }
+            
+            window.print();
+        }
+
+        function resetForm() {
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientHN').value = '';
+            document.getElementById('inviteDate').value = '';
+            document.getElementById('healthCenter').value = '';
+            document.getElementById('relativeName').value = '';
+            document.getElementById('relativeRelation').value = '';
+            document.getElementById('familyCount').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('familyList').innerHTML = '';
+        }
+
+        // ตั้งค่าวันที่ปัจจุบัน
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inviteDate').value = today;
+        };
+    </script>
+
+</body></html>

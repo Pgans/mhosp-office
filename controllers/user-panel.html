@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการคำขอ - IT Request System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Sarabun', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .filter-group select {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Sarabun', Arial, sans-serif;
+        }
+        
+        .filter-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: auto;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .ticket-id {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .status-todo {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-inprogress {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+            white-space: nowrap;
+        }
+        
+        .priority-1 {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .priority-2 {
+            background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+            color: white;
+        }
+        
+        .priority-3 {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #333;
+        }
+        
+        .priority-4 {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+        }
+        
+        .priority-5 {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .file-link {
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            padding: 5px 0;
+        }
+        
+        .file-link:hover {
+            text-decoration: underline;
+        }
+        
+        .note-text {
+            background: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 รายการคำขอใช้งานโปรแกรม</h1>
+            <p>รายการที่ได้รับการอนุมัติจาก IT Admin เรียงตามลำดับความสำคัญ</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>รอดำเนินการ</h3>
+                <div class="number" id="todoCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>กำลังดำเนินการ</h3>
+                <div class="number" id="inprogressCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>เสร็จสิ้น</h3>
+                <div class="number" id="completedCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>ทั้งหมด</h3>
+                <div class="number" id="totalCount">0</div>
+            </div>
+        </div>
+        
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>
+                    <input type="checkbox" id="showCompleted" onchange="applyFilter()">
+                    แสดงงานเสร็จสิ้น/ยกเลิก
+                </label>
+                
+                <label style="margin-left: 20px;">กรองตามแผนก:</label>
+                <select id="departmentFilter" onchange="applyFilter()">
+                    <option value="all">ทั้งหมด</option>
+                </select>
+                
+                <button class="refresh-btn" onclick="loadRequests()">
+                    🔄 รีเฟรช
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div class="section-header">
+                รายการคำขอทั้งหมด (เรียงตามลำดับความสำคัญ)
+            </div>
+            <div id="requestsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>กำลังโหลดข้อมูล...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ ต้องแทนที่ URL นี้ด้วย Web App URL ของคุณ
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgGMQUYX3llNa625mvGlJeOfo7Z7OCiMPY4Y_ggj9yijWR9O1cEpVEyH69Xsqw_9hdbg/exec';
+        
+        let allRequests = [];
+        
+        // โหลดข้อมูลเมื่อเปิดหน้า
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRequests();
+        });
+        
+        // โหลดรายการคำขอ
+        async function loadRequests() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?action=getApproved');
+                const result = await response.json();
+                
+                const container = document.getElementById('requestsList');
+                
+                if (!result.success || result.data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>ยังไม่มีรายการคำขอ</h3>
+                            <p>รายการที่ได้รับการอนุมัติจะแสดงที่นี่</p>
+                        </div>
+                    `;
+                    updateStats([]);
+                    return;
+                }
+                
+                allRequests = result.data;
+                updateDepartmentFilter(allRequests);
+                updateStats(allRequests);
+                applyFilter(); // เรียก applyFilter แทน displayRequests เพื่อให้ใช้ default filter
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('requestsList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>เกิดข้อผิดพลาด</h3>
+                        <p>ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // แสดงรายการคำขอในรูปแบบตาราง
+        function displayRequests(requests) {
+            const container = document.getElementById('requestsList');
+            
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>ไม่พบรายการที่ตรงกับเงื่อนไข</h3>
+                        <p>ลองเปลี่ยนตัวกรองดู</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Ticket ID</th>
+                            <th style="width: 80px;">ลำดับ</th>
+                            <th style="width: 100px;">สถานะ</th>
+                            <th style="width: 150px;">ผู้ขอ</th>
+                            <th style="width: 100px;">แผนก</th>
+                            <th style="width: 250px;">รายละเอียด</th>
+                            <th style="width: 120px;">วันที่ขอ</th>
+                            <th style="width: 120px;">วันที่อนุมัติ</th>
+                            <th style="width: 120px;">วันที่เสร็จ</th>
+                            <th style="width: 200px;">หมายเหตุ IT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            requests.forEach(req => {
+                const statusClass = getStatusClass(req['สถานะ']);
+                const priorityClass = getPriorityClass(req['ลำดับความสำคัญ']);
+                
+                tableHTML += `
+                    <tr>
+                        <td>
+                            <div class="ticket-id">${req['Ticket_ID']}</div>
+                        </td>
+                        <td>
+                            <span class="priority-badge ${priorityClass}">
+                                ⭐ ${req['ลำดับความสำคัญ']}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}">${req['สถานะ']}</span>
+                        </td>
+                        <td>${req['ชื่อ-สกุล']}</td>
+                        <td>${req['แผนก']}</td>
+                        <td>
+                            <strong>โปรแกรม:</strong> ${req['โปรแกรม/รายละเอียด']}<br>
+                            <strong>เงื่อนไข:</strong> ${req['เงื่อนไข']}<br>
+                            <strong>ตัวแปร:</strong> ${req['ตัวแปรสำคัญ']}<br>
+                            <strong>ผลกระทบ:</strong> ${req['หน่วยงานที่อาจได้รับผลกระทบ']}
+                            ${req['ไฟล์แนบ'] ? `<br><strong>📎 ไฟล์:</strong> ${formatFileLinks(req['ไฟล์แนบ'])}` : ''}
+                        </td>
+                        <td>${formatDate(req['วันที่-เวลาที่ขอ'])}</td>
+                        <td>${formatDate(req['วันที่อนุมัติ'])}</td>
+                        <td>${req['วันที่เสร็จสิ้น'] ? formatDate(req['วันที่เสร็จสิ้น']) : '-'}</td>
+                        <td>${req['หมายเหตุจาก IT'] ? `<div class="note-text">${req['หมายเหตุจาก IT']}</div>` : '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+        
+        // กรองข้อมูล - Default ซ่อนงาน "เสร็จสิ้น" และ "ยกเลิก"
+        function applyFilter() {
+            const showCompleted = document.getElementById('showCompleted').checked;
+            const departmentFilter = document.getElementById('departmentFilter').value;
+            
+            let filtered = allRequests;
+            
+            // กรองตามสถานะ - Default ซ่อน "เสร็จสิ้น" และ "ยกเลิก"
+            if (!showCompleted) {
+                filtered = filtered.filter(req => 
+                    req['สถานะ'] !== 'เสร็จสิ้น' && req['สถานะ'] !== 'ยกเลิก'
+                );
+            }
+            
+            // กรองตามแผนก
+            if (departmentFilter !== 'all') {
+                filtered = filtered.filter(req => req['แผนก'] === departmentFilter);
+            }
+            
+            displayRequests(filtered);
+        }
+        
+        // อัปเดตสถิติ
+        function updateStats(requests) {
+            const todoCount = requests.filter(r => r['สถานะ'] === 'รอดำเนินการ').length;
+            const inprogressCount = requests.filter(r => r['สถานะ'] === 'กำลังดำเนินการ').length;
+            const completedCount = requests.filter(r => r['สถานะ'] === 'เสร็จสิ้น').length;
+            
+            document.getElementById('todoCount').textContent = todoCount;
+            document.getElementById('inprogressCount').textContent = inprogressCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('totalCount').textContent = requests.length;
+        }
+        
+        // อัปเดตตัวกรองแผนก
+        function updateDepartmentFilter(requests) {
+            const departments = [...new Set(requests.map(r => r['แผนก']))].sort();
+            const select = document.getElementById('departmentFilter');
+            
+            // เก็บค่าที่เลือกไว้
+            const currentValue = select.value;
+            
+            // ล้างตัวเลือก
+            select.innerHTML = '<option value="all">ทั้งหมด</option>';
+            
+            // เพิ่มแผนกทั้งหมด
+            departments.forEach(dept => {
+                if (dept) {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    select.appendChild(option);
+                }
+            });
+            
+            // คืนค่าที่เลือกไว้
+            select.value = currentValue;
+        }
+        
+        // จัดรูปแบบวันที่
+        function formatDate(dateValue) {
+            if (!dateValue) return '-';
+            
+            try {
+                let date;
+                if (typeof dateValue === 'string') {
+                    date = new Date(dateValue);
+                } else if (dateValue instanceof Date) {
+                    date = dateValue;
+                } else {
+                    return dateValue;
+                }
+                
+                if (isNaN(date.getTime())) {
+                    return dateValue;
+                }
+                
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear() + 543;
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (error) {
+                return dateValue;
+            }
+        }
+        
+        // จัดรูปแบบลิงก์ไฟล์
+        function formatFileLinks(filesText) {
+            if (!filesText) return '';
+            
+            const lines = filesText.split('\n').filter(line => line.trim());
+            
+            return lines.map(line => {
+                const match = line.match(/(.+?):\s*(https?:\/\/.+)/);
+                if (match) {
+                    const filename = match[1].trim();
+                    const url = match[2].trim();
+                    return `<a href="${url}" target="_blank" class="file-link">📎 ${filename}</a>`;
+                }
+                return line;
+            }).join('');
+        }
+        
+        // คลาส CSS สำหรับสถานะ
+        function getStatusClass(status) {
+            switch(status) {
+                case 'รอดำเนินการ': return 'status-todo';
+                case 'กำลังดำเนินการ': return 'status-inprogress';
+                case 'เสร็จสิ้น': return 'status-completed';
+                default: return '';
+            }
+        }
+        
+        // คลาส CSS สำหรับลำดับความสำคัญ
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 1: return 'priority-1';
+                case 2: return 'priority-2';
+                case 3: return 'priority-3';
+                case 4: return 'priority-4';
+                case 5: return 'priority-5';
+                default: return '';
+            }
+        }
+    </script>
+</body>
+</html>

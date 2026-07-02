@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="th"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องคำนวณการให้ยา INH + Rifapentine</title>
+    <style>
+        body {
+            font-family: 'Sarabun', Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .input-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .result-section {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 5px solid #28a745;
+        }
+        .warning {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #ffc107;
+            margin-bottom: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .schedule-table th {
+            background-color: #2c5aa0;
+            color: white;
+        }
+        .schedule-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .dose-day {
+            background-color: #d4edda !important;
+            font-weight: bold;
+        }
+        .calculation-details {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+                font-size: 12pt;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+            }
+            .input-section, button {
+                display: none !important;
+            }
+            .header {
+                background-color: #2c5aa0 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .schedule-table th {
+                background-color: #2c5aa0 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                color: white !important;
+            }
+            .dose-day {
+                background-color: #d4edda !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .result-section {
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .warning {
+                border: 1px solid #ffc107;
+                background-color: #fff3cd !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .print-info {
+                display: block !important;
+                text-align: right;
+                font-size: 10pt;
+                color: #666;
+                margin-top: 20px;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+            }
+        }
+        
+        .print-info {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>เครื่องคำนวณการให้ยา INH900 + Rifapentine900</h1>
+            <p>สำหรับการรักษา IGRA positive (3HP regimen)</p>
+        </div>
+
+        <div class="input-section">
+            <h3>ข้อมูลผู้ป่วย</h3>
+            <label>ชื่อ-นามสกุลผู้ป่วย:</label>
+            <input type="text" id="patientName" placeholder="กรอกชื่อ-นามสกุลผู้ป่วย">
+            
+            <label>HN (Hospital Number):</label>
+            <input type="text" id="hn" placeholder="กรอกเลข HN">
+            
+            <label>วันที่เริ่มให้ยา:</label>
+            <input type="date" id="startDate" value="2025-05-07">
+            
+            <label>จำนวนยาที่จ่าย (เม็ด):</label>
+            <input type="number" id="totalPills" value="36" min="1">
+            
+            <label>จำนวนเม็ดต่อครั้ง:</label>
+            <input type="number" id="pillsPerDose" value="3" min="1">
+            
+            <label>ความถี่ในการให้ยา:</label>
+            <select id="frequency">
+                <option value="7" selected="selected">ทุกสัปดาห์ (ทุก 7 วัน)</option>
+                <option value="14">ทุก 2 สัปดาห์</option>
+            </select>
+            
+            <label>วันในสัปดาห์ที่ให้ยา:</label>
+            <select id="dayOfWeek">
+                <option value="0">วันอาทิตย์</option>
+                <option value="1">วันจันทร์</option>
+                <option value="2">วันอังคาร</option>
+                <option value="3" selected="selected">วันพุธ</option>
+                <option value="4">วันพฤหัสบดี</option>
+                <option value="5">วันศุกร์</option>
+                <option value="6">วันเสาร์</option>
+            </select>
+            
+            <button onclick="calculateSchedule()">คำนวณตารางการให้ยา</button>
+            <button onclick="resetForm()">รีเซ็ต</button>
+            <button onclick="printSchedule()" style="background-color: #007bff;">🖨️ ปริ้นตารางการให้ยา</button>
+        </div>
+
+        <div class="warning">
+            <strong>หมายเหตุ:</strong> 3HP regimen คือการให้ INH + Rifapentine รวม 12 doses ในช่วง 3 เดือน (ให้สัปดาห์ละครั้ง)
+        </div>
+
+        <div id="results" class="result-section" style="display: block;">
+            <h3>ผลการคำนวณ</h3>
+            <div id="summary">
+                <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <p><strong>ชื่อผู้ป่วย:</strong> ไม่ระบุ</p>
+                    <p><strong>HN:</strong> ไม่ระบุ</p>
+                </div>
+                <p><strong>จำนวน doses ทั้งหมด:</strong> 12 ครั้ง</p>
+                <p><strong>ยาคงเหลือ:</strong> 0 เม็ด</p>
+                <p><strong>วันที่เริ่มให้ยา:</strong> 7/5/2568 (พุธ)</p>
+                <p><strong>วันที่ให้ยาครั้งสุดท้าย:</strong> 23/7/2568 (พุธ)</p>
+                <p><strong>ระยะเวลารักษา:</strong> 11 สัปดาห์</p>
+                <p style="color: green;"><strong>✓ ครบตาม 3HP regimen (12 doses)</strong></p>
+            </div>
+            <div id="schedule"><table class="schedule-table"><tbody><tr><th>ครั้งที่</th><th>วันที่</th><th>วัน</th><th>จำนวนเม็ด</th><th>ยาคงเหลือ</th></tr><tr class="dose-day">
+                    <td>1</td>
+                    <td>7/5/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>33</td>
+                </tr><tr class="dose-day">
+                    <td>2</td>
+                    <td>14/5/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>30</td>
+                </tr><tr class="dose-day">
+                    <td>3</td>
+                    <td>21/5/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>27</td>
+                </tr><tr class="dose-day">
+                    <td>4</td>
+                    <td>28/5/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>24</td>
+                </tr><tr class="dose-day">
+                    <td>5</td>
+                    <td>4/6/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>21</td>
+                </tr><tr class="dose-day">
+                    <td>6</td>
+                    <td>11/6/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>18</td>
+                </tr><tr class="dose-day">
+                    <td>7</td>
+                    <td>18/6/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>15</td>
+                </tr><tr class="dose-day">
+                    <td>8</td>
+                    <td>25/6/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>12</td>
+                </tr><tr class="dose-day">
+                    <td>9</td>
+                    <td>2/7/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>9</td>
+                </tr><tr class="dose-day">
+                    <td>10</td>
+                    <td>9/7/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>6</td>
+                </tr><tr class="dose-day">
+                    <td>11</td>
+                    <td>16/7/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>3</td>
+                </tr><tr class="dose-day">
+                    <td>12</td>
+                    <td>23/7/2568</td>
+                    <td>พุธ</td>
+                    <td>3</td>
+                    <td>0</td>
+                </tr></tbody></table></div>
+            <div class="calculation-details">
+                <h4>รายละเอียดการคำนวณ</h4>
+                <div id="calculationDetails">
+                <p><strong>สูตรการคำนวณ:</strong></p>
+                <p>• จำนวน doses = 36 ÷ 3 = 12 ครั้ง</p>
+                <p>• ยาเหลือ = 36 % 3 = 0 เม็ด</p>
+                <p>• ระยะเวลา = (12 - 1) × 7 ÷ 7 = 11 สัปดาห์</p>
+                <p><strong>หมายเหตุ:</strong> 3HP regimen ต้องการ 12 doses ในช่วง 12 สัปดาห์</p>
+            </div>
+            </div>
+        </div>
+        
+        <div class="print-info">
+            <p>พิมพ์เมื่อ: <span id="printDate"></span> | โรงพยาบาล: _________________ | ผู้จ่ายยา: _________________</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateSchedule() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const totalPills = parseInt(document.getElementById('totalPills').value);
+            const pillsPerDose = parseInt(document.getElementById('pillsPerDose').value);
+            const frequency = parseInt(document.getElementById('frequency').value);
+            const dayOfWeek = parseInt(document.getElementById('dayOfWeek').value);
+
+            if (!startDate || !totalPills || !pillsPerDose) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            // คำนวณจำนวน doses ที่ได้
+            const totalDoses = Math.floor(totalPills / pillsPerDose);
+            const remainingPills = totalPills % pillsPerDose;
+
+            // ปรับวันเริ่มต้นให้ตรงกับวันในสัปดาห์ที่กำหนด
+            const adjustedStartDate = new Date(startDate);
+            const currentDay = adjustedStartDate.getDay();
+            const daysToAdd = (dayOfWeek - currentDay + 7) % 7;
+            adjustedStartDate.setDate(adjustedStartDate.getDate() + daysToAdd);
+
+            // สร้างตารางการให้ยา
+            let scheduleHTML = '<table class="schedule-table">';
+            scheduleHTML += '<tr><th>ครั้งที่</th><th>วันที่</th><th>วัน</th><th>จำนวนเม็ด</th><th>ยาคงเหลือ</th></tr>';
+
+            let currentDate = new Date(adjustedStartDate);
+            let remainingStock = totalPills;
+            const dayNames = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+            for (let i = 1; i <= totalDoses; i++) {
+                remainingStock -= pillsPerDose;
+                
+                scheduleHTML += `<tr class="dose-day">
+                    <td>${i}</td>
+                    <td>${currentDate.toLocaleDateString('th-TH')}</td>
+                    <td>${dayNames[currentDate.getDay()]}</td>
+                    <td>${pillsPerDose}</td>
+                    <td>${remainingStock}</td>
+                </tr>`;
+
+                currentDate.setDate(currentDate.getDate() + frequency);
+            }
+
+            scheduleHTML += '</table>';
+
+            // คำนวณวันที่จะหมด
+            const lastDoseDate = new Date(adjustedStartDate);
+            lastDoseDate.setDate(lastDoseDate.getDate() + (totalDoses - 1) * frequency);
+
+            // สร้างสรุปผล
+            const patientName = document.getElementById('patientName').value || 'ไม่ระบุ';
+            const hn = document.getElementById('hn').value || 'ไม่ระบุ';
+            
+            const summaryHTML = `
+                <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <p><strong>ชื่อผู้ป่วย:</strong> ${patientName}</p>
+                    <p><strong>HN:</strong> ${hn}</p>
+                </div>
+                <p><strong>จำนวน doses ทั้งหมด:</strong> ${totalDoses} ครั้ง</p>
+                <p><strong>ยาคงเหลือ:</strong> ${remainingPills} เม็ด</p>
+                <p><strong>วันที่เริ่มให้ยา:</strong> ${adjustedStartDate.toLocaleDateString('th-TH')} (${dayNames[adjustedStartDate.getDay()]})</p>
+                <p><strong>วันที่ให้ยาครั้งสุดท้าย:</strong> ${lastDoseDate.toLocaleDateString('th-TH')} (${dayNames[lastDoseDate.getDay()]})</p>
+                <p><strong>ระยะเวลารักษา:</strong> ${Math.ceil((totalDoses - 1) * frequency / 7)} สัปดาห์</p>
+                ${totalDoses >= 12 ? '<p style="color: green;"><strong>✓ ครบตาม 3HP regimen (12 doses)</strong></p>' : 
+                  '<p style="color: orange;"><strong>⚠ ยังไม่ครบ 12 doses ตาม 3HP regimen</strong></p>'}
+            `;
+
+            // รายละเอียดการคำนวณ
+            const calculationHTML = `
+                <p><strong>สูตรการคำนวณ:</strong></p>
+                <p>• จำนวน doses = ${totalPills} ÷ ${pillsPerDose} = ${totalDoses} ครั้ง</p>
+                <p>• ยาเหลือ = ${totalPills} % ${pillsPerDose} = ${remainingPills} เม็ด</p>
+                <p>• ระยะเวลา = (${totalDoses} - 1) × ${frequency} ÷ 7 = ${Math.ceil((totalDoses - 1) * frequency / 7)} สัปดาห์</p>
+                <p><strong>หมายเหตุ:</strong> 3HP regimen ต้องการ 12 doses ในช่วง 12 สัปดาห์</p>
+            `;
+
+            document.getElementById('summary').innerHTML = summaryHTML;
+            document.getElementById('schedule').innerHTML = scheduleHTML;
+            document.getElementById('calculationDetails').innerHTML = calculationHTML;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function resetForm() {
+            document.getElementById('patientName').value = '';
+            document.getElementById('hn').value = '';
+            document.getElementById('startDate').value = '2025-05-07';
+            document.getElementById('totalPills').value = '36';
+            document.getElementById('pillsPerDose').value = '3';
+            document.getElementById('frequency').value = '7';
+            document.getElementById('dayOfWeek').value = '3';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        function printSchedule() {
+            // อัปเดตวันที่พิมพ์
+            const now = new Date();
+            document.getElementById('printDate').textContent = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH');
+            
+            // ตรวจสอบว่ามีการคำนวณแล้วหรือไม่
+            if (document.getElementById('results').style.display === 'none') {
+                alert('กรุณาคำนวณตารางการให้ยาก่อนพิมพ์');
+                return;
+            }
+            
+            // พิมพ์หน้าเว็บ
+            window.print();
+        }
+
+        // คำนวณอัตโนมัติเมื่อโหลดหน้า
+        window.onload = function() {
+            calculateSchedule();
+        };
+    </script>
+
+</body></html>

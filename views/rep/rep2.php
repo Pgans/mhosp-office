@@ -6,22 +6,20 @@ use yii\helpers\Url;
 use kartik\editable\Editable;
 use \miloschuman\highcharts\Highcharts;
 
-
-
-
-$this->title = 'rep E-Claim';
+$this->title = 'ส่งการเงิน'  .$subfund;
 //$this->params['breadcrumbs'][] = ['label' => 'รายงาน', 'url' => ['rep/index']];
 //$this->params['breadcrumbs'][] = 'รายงานข้อมูลE-Claim แยกตามREP';
 ?>
-<?php
 
+ <input class="btn btn-primary" name="btnButton" type="button" value="Print Results" onClick="JavaScript:window.print();">
+<?php
 echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'panel' => [
+      //  'filterModel' => $searchModel,
+       /* 'panel' => [
             'before'=>'<a>รายงานข้อมูลE-Claim แยกตามREP  ประจำเดือน</a> '.date('Y-m'),
             'after'=>'ประมวลผล '.date('Y-m-d H:i:s')
-            ],
+            ],*/
             'showPageSummary' => true,
             'columns' => [
                    // ['class' => 'yii\grid\SerialColumn'],
@@ -41,6 +39,16 @@ echo GridView::widget([
                        'headerOptions'=>[ 'style'=>'background-color:#a4e7df'] ,
                        
                     ],
+					[
+                        'attribute' => 'MAININSCL',
+                       'headerOptions'=>[ 'style'=>'background-color:#a4e7df'] ,
+                       
+                    ],
+                    [
+                        'attribute' => 'TRAN_ID',
+                       'headerOptions'=>[ 'style'=>'background-color:#a4e7df'] ,
+                       
+                    ],
                     
                     [
                         'attribute' => 'DATEADM',
@@ -56,16 +64,7 @@ echo GridView::widget([
                             return "<font  color='2E86C1'>" . $model['FULLNAME'] . "</font>"; 
                     }, 
                     ],
-                    [
-                        'attribute' => 'SUB_FUND',
-                        'label'=>'กองทุนย่อย',
-                       'headerOptions'=>[ 'style'=>'background-color:#a4e7df'] ,
-                       'format'=>'raw',
-                        'value' => function ($model, $key, $index, $widget) {
-                            return "<font  color='FF9C33'>" . $model['SUB_FUND'] . "</font>"; 
-                    }, 
-                       'pageSummary'=> 'รวม',
-                    ],
+                    
                     [
                        // 'class' => 'kartik\grid\EditableColumn',
                         'attribute' => 'SUMS_SERVICEITEM',
@@ -99,7 +98,7 @@ echo GridView::widget([
                  echo '<p align = "center">นางสายใจ   บุญทา</p> ';
                  echo '<p align="center">ตำแหน่งเจ้าพนักงานเวชสถิติปฏิบัติงาน</p>';
                 ?>
-                       <input class="btn btn-primary" name="btnButton" type="button" value="Print Results" onClick="JavaScript:window.print();">
+                      
                     </div>
                     
                  

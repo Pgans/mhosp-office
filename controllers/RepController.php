@@ -12,6 +12,52 @@ class RepController extends \yii\web\Controller
     {
         return $this->render('index');
     }
+	###########################################
+	###แยกดึงข้อมูลรายเดือน ลดการคีย์เลือกREP#####################
+	public function actionRepmonth(){
+		//$data = Yii::$app->request->post();
+       // $rep= Yii::$app->session['REP'];
+       // $subfund = isset($data['SUB_FUND']) ? $data['SUB_FUND'] : 'null';
+        # $sex = isset($data['sex']) ? $data['sex'] : '1,2';
+           // $idsubfund = isset($data['rep1']) ? $data['rep1'] : '';
+            //$date2 = isset($data['date2']) ? $data['date2'] : '';
+        
+        $sql = "
+			SELECT k.SUB_FUND,COUNT(k.pid) as AMOUNT
+			FROM 
+			(SELECT DISTINCT r.REP, r.HN, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
+			REPLACE(r.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM,s.SUB_FUND,s.TOTL_AMT, s.ACT_AMT, r.NOTEDATE
+			FROM m_registerdata r
+			INNER JOIN m_sum_subfund s ON r.tran_id = s.tran_id  
+			WHERE r.notedate BETWEEN '25630901' AND '25630931' 
+			AND r.maininscl = 'UCS') as k
+			GROUP BY k.SUB_FUND  ORDER BY amount DESC       
+         ";
+        $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
+       try {
+           $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+       } catch (\yii\db\Exception $e) {
+           throw new \yii\web\ConflictHttpException('sql error');
+       }
+       
+       $dataProvider = new \yii\data\ArrayDataProvider([
+           'allModels' => $rawData,
+           'pagination' => [
+            'pageSize' => 200,
+            ],
+       ]);
+    
+       return $this->render('repmonth', [
+                  // 'searchModel' => $searchModel,
+                   'dataProvider' => $dataProvider,
+                  // 'sql'=>$sql,
+                   //'subfund'=>$subfund,
+                
+       ]);   
+   }
+		
+	
+	###########################################
     public function actionRep1(){
 
         $data = Yii::$app->request->post();
@@ -42,10 +88,10 @@ class RepController extends \yii\web\Controller
         GROUP BY k.sub_fund
                 
          ";
-        $rawData = \yii::$app->db->createCommand($sql)->queryAll();
+        $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
        try {
-           $rawData = \Yii::$app->db->createCommand($sql)->queryAll();
-       } catch (\yii\db2\Exception $e) {
+           $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+       } catch (\yii\db\Exception $e) {
            throw new \yii\web\ConflictHttpException('sql error');
        }
        Yii::$app->session['rep1']=$rep1;
@@ -67,7 +113,7 @@ class RepController extends \yii\web\Controller
        ]);
     
        return $this->render('rep1', [
-                   'searchModel' => $searchModel,
+                  // 'searchModel' => $searchModel,
                    'dataProvider' => $dataProvider,
                    'sql'=>$sql,
                    'rep1'=>$rep1,
@@ -109,10 +155,10 @@ class RepController extends \yii\web\Controller
         WHERE (r.REP = '$rep1' OR r.REP = '$rep2' OR r.REP = '$rep3' OR r.REP = '$rep3'OR r.REP = '$rep4'
         OR r.REP = '$rep5'OR r.REP = '$rep6' OR r.REP = '$rep7' OR r.REP = '$rep8' OR r.REP = '$rep9' ) 
          ";
-        $rawData = \yii::$app->db->createCommand($sql)->queryAll();
+        $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
        try {
-           $rawData = \Yii::$app->db->createCommand($sql)->queryAll();
-       } catch (\yii\db2\Exception $e) {
+           $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+       } catch (\yii\db\Exception $e) {
            throw new \yii\web\ConflictHttpException('sql error');
        }
        Yii::$app->session['rep1']=$rep1;
@@ -143,7 +189,7 @@ class RepController extends \yii\web\Controller
     //     //'label' => 'วันมารับบริการ'
     // ];
        return $this->render('rep', [
-                   'searchModel' => $searchModel,
+                  // 'searchModel' => $searchModel,
                    'dataProvider' => $dataProvider,
                    'subfund'=>$subfund,
                    'sql'=>$sql,
@@ -172,17 +218,17 @@ class RepController extends \yii\web\Controller
         $rep8 = Yii::$app->session['rep8'];
         $rep9 = Yii::$app->session['rep9'];
        
-    $sql = "SELECT DISTINCT r.REP, r.HN, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
+    $sql = "SELECT DISTINCT r.REP, r.HN,r.TRAN_ID, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
     REPLACE(r.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM,s.SUB_FUND,s.TOTL_AMT, s.ACT_AMT
     FROM m_registerdata r
     INNER JOIN m_sum_subfund s ON r.tran_id = s.tran_id  AND s.SUB_FUND = '$subfund'
     WHERE (r.REP = '$rep1' OR r.REP = '$rep2' OR r.REP = '$rep3' OR r.REP = '$rep3'OR r.REP = '$rep4'
     OR r.REP = '$rep5'OR r.REP = '$rep6' OR r.REP = '$rep7' OR r.REP = '$rep8' OR r.REP = '$rep9' ) 
      ";
-    $rawData = \yii::$app->db->createCommand($sql)->queryAll();
+    $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
    try {
-       $rawData = \Yii::$app->db->createCommand($sql)->queryAll();
-   } catch (\yii\db2\Exception $e) {
+       $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+   } catch (\yii\db\Exception $e) {
        throw new \yii\web\ConflictHttpException('sql error');
    }
    Yii::$app->session['rep1']=$rep1;
@@ -195,6 +241,7 @@ class RepController extends \yii\web\Controller
    Yii::$app->session['rep8']=$rep8;
    Yii::$app->session['rep9']=$rep9;
    Yii::$app->session['subfund']=$subfund;
+   Yii::$app->session['TRAN_ID']=$tran_id;
    
    $dataProvider = new \yii\data\ArrayDataProvider([
        'allModels' => $rawData,
@@ -203,7 +250,7 @@ class RepController extends \yii\web\Controller
         ],
    ]);
    return $this->render('rep_list', [
-               'searchModel' => $searchModel,
+              // 'searchModel' => $searchModel,
                'dataProvider' => $dataProvider,
                'subfund'=>$subfund,
                'sql'=>$sql,
@@ -216,8 +263,8 @@ class RepController extends \yii\web\Controller
                'rep7'=>$rep7,   
                'rep8'=>$rep8,                  
                'rep9'=>$rep9,
-               'subfund'=>$subfund,
-
+			   'tranid' => $tranid,
+              
 
    ]);   
 }
@@ -231,24 +278,24 @@ class RepController extends \yii\web\Controller
     $rep7= Yii::$app->session['rep7'];
     $rep8= Yii::$app->session['rep8'];
     $rep9= Yii::$app->session['rep9'];
-    $subfund= Yii::$app->session['subfund'];
-    $sql = "SELECT r.REP, r.HN, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
-    REPLACE(r.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM,s.SUB_FUND,s.TOTL_AMT
+    //$subfund= Yii::$app->session['subfund'];
+    $sql = "SELECT r.REP, r.HN, r.TRAN_ID,r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
+    REPLACE(r.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM
     FROM m_registerdata r
-    INNER JOIN m_sum_subfund s ON r.tran_id = s.tran_id AND s.SUB_FUND = '$subfund'
-
     WHERE (r.REP = '$rep1' OR r.REP = '$rep2' OR r.REP = '$rep3' OR r.REP = '$rep3'OR r.REP = '$rep4'
-    OR r.REP = '$rep5'OR r.REP = '$rep6' OR r.REP = '$rep7' OR r.REP = '$rep8' OR r.REP = '$rep9') ";
-    $rawData = \yii::$app->db->createCommand($sql)->queryAll();
+    OR r.REP = '$rep5'OR r.REP = '$rep6' OR r.REP = '$rep7' OR r.REP = '$rep8' OR r.REP = '$rep9'
+	AND r.TRAN_ID ='$tranid'
+	) ";
+    $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
    try {
-       $rawData = \Yii::$app->db->createCommand($sql)->queryAll();
-   } catch (\yii\db2\Exception $e) {
+       $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+   } catch (\yii\db\Exception $e) {
        throw new \yii\web\ConflictHttpException('sql error');
    }
    $dataProvider = new \yii\data\ArrayDataProvider([
        'allModels' => $rawData,
        'pagination' => [
-        'pageSize' => 200,
+        'pageSize' => 600,
         ],
    ]);
 //    $dataProvider->sort->attributes['DATEADM'] = [
@@ -267,7 +314,7 @@ class RepController extends \yii\web\Controller
 //     //'label' => 'วันมารับบริการ'
 // ];
    return $this->render('rep2', [
-               'searchModel' => $searchModel,
+              // 'searchModel' => $searchModel,
                'dataProvider' => $dataProvider,
                'sql'=>$sql,
                           
@@ -284,17 +331,16 @@ public function actionRep3(){
     $rep8= Yii::$app->session['rep8'];
     $rep9= Yii::$app->session['rep9'];
     $subfund= Yii::$app->session['subfund'];
-    $sql = "SELECT r.REP, r.HN, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
+    $sql = "SELECT DISTINCT r.REP, r.HN, r.PID, r.DATEADM ,CONCAT(SUBSTR(r.TITLES,2),'',r.FNAME,' ',r.LNAME) AS FULLNAME, r.MAININSCL,
     REPLACE(r.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM,s.SUB_FUND,s.TOTL_AMT, s.ACT_AMT
     FROM m_registerdata r
     INNER JOIN m_sum_subfund s ON r.tran_id = s.tran_id AND s.SUB_FUND = '$subfund'
-
     WHERE (r.REP = '$rep1' OR r.REP = '$rep2' OR r.REP = '$rep3' OR r.REP = '$rep3'OR r.REP = '$rep4'
     OR r.REP = '$rep5'OR r.REP = '$rep6' OR r.REP = '$rep7' OR r.REP = '$rep8' OR r.REP = '$rep9') ";
-    $rawData = \yii::$app->db->createCommand($sql)->queryAll();
+    $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
    try {
-       $rawData = \Yii::$app->db->createCommand($sql)->queryAll();
-   } catch (\yii\db2\Exception $e) {
+       $rawData = \Yii::$app->db1->createCommand($sql)->queryAll();
+   } catch (\yii\db1\Exception $e) {
        throw new \yii\web\ConflictHttpException('sql error');
    }
    $dataProvider = new \yii\data\ArrayDataProvider([
@@ -319,7 +365,7 @@ public function actionRep3(){
 //     //'label' => 'วันมารับบริการ'
 // ];
    return $this->render('rep3', [
-               'searchModel' => $searchModel,
+              // 'searchModel' => $searchModel,
                'dataProvider' => $dataProvider,
                'sql'=>$sql,
                           
@@ -347,7 +393,7 @@ $dataProvider = new \yii\data\ArrayDataProvider([
     ],
 ]);
     return $this->render('ipcs', [
-        'searchModel'=> $searchModel,
+       // 'searchModel'=> $searchModel,
         'dataProvider'=> $dataProvider,
         'sql'=> $sql,
 
@@ -355,15 +401,17 @@ $dataProvider = new \yii\data\ArrayDataProvider([
 }
 public function actionAdjrw(){
     $sql = "      
-SELECT k.HCODE, k.NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
+SELECT k.HCODE, k.INSCL_NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
 FROM (
 SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
 s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-m.ADJRW_NHSO, m.DRG_NHSO, i.NAME
+m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME
 FROM m_registerdata m
 INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.SUB_FUND NOT IN ('OP_HMAIN' , 'OPAE-DRUG')
-INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
-WHERE m.DATEADM BETWEEN '25621001' AND '25630930' AND m.ADJRW_NHSO <> '' )as k
+INNER JOIN l_inscl i ON i.MAININSCL = m.MAININSCL
+WHERE m.DATEADM BETWEEN '25631001' AND '25640930' 
+#AND m.ADJRW_NHSO <> '' 
+)as k
 GROUP BY k.SUB_FUND
             ";
             $rawData = \yii::$app->db1->createCommand($sql)->queryAll();
@@ -379,7 +427,7 @@ GROUP BY k.SUB_FUND
                  ],
             ]);
                  return $this->render('adjrw_nhso', [
-                     'searchModel'=> $searchModel,
+                   
                      'dataProvider'=> $dataProvider,
                      'sql'=> $sql,
          
@@ -388,10 +436,10 @@ GROUP BY k.SUB_FUND
              public function actionTrimas(){
                  $connnection = \yii::$app->db1;
                  $trimas1 = $connnection->createCommand(" 
-        SELECT DISTINCT  i.NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
+        SELECT DISTINCT  i.INSCL_NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
         FROM m_registerdata m
         INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.SUB_FUND NOT IN ('OP_HMAIN' , 'OPAE-DRUG')
-        INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+        INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
         WHERE m.DATEADM BETWEEN '25621001' AND '25630131' AND m.ADJRW_NHSO <> ''
         GROUP BY s.SUB_FUND
                  ")->queryAll(); 
@@ -403,7 +451,7 @@ GROUP BY k.SUB_FUND
                 ]);
             //เตรียมข้อมูลส่งให้กราฟ ไตรมาส1
             for($i=0;$i<sizeof($trimas1);$i++){
-                $name[] = $trimas1[$i]['NAME'];        
+                $name[] = $trimas1[$i]['INSCL_NAME'];        
                 $amount[] =intval($trimas1[$i]['AMOUNT']);
                 $adjrw[] = (int) $trimas1[$i]['ADJRW']*1;
                # $cnt[] = $d['cnt']*1;//นำไปคูณ 1 ป้องกันเป็น string
@@ -411,12 +459,12 @@ GROUP BY k.SUB_FUND
      ############################################################# 
      $connnection = \yii::$app->db1;
      $trimas2 = $connnection->createCommand(" 
-    SELECT DISTINCT  i.NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
-    FROM m_registerdata m
-    INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.SUB_FUND NOT IN ('OP_HMAIN' , 'OPAE-DRUG')
-    INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
-    WHERE m.DATEADM BETWEEN '25630201' AND '25630531' AND m.ADJRW_NHSO <> ''
-    GROUP BY s.SUB_FUND
+    SELECT DISTINCT  i.INSCL_NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
+        FROM m_registerdata m
+        INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.SUB_FUND NOT IN ('OP_HMAIN' , 'OPAE-DRUG')
+        INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
+        WHERE m.DATEADM BETWEEN '25630201' AND '25630531' AND m.ADJRW_NHSO <> ''
+        GROUP BY s.SUB_FUND
      ")->queryAll(); 
      $t2dataProvider = new ArrayDataProvider([
          'allModels'=> $trimas2,
@@ -434,10 +482,10 @@ for($i=0;$i<sizeof($trimas2);$i++){
      ############################################################# 
      $connnection = \yii::$app->db1;
      $trimas3 = $connnection->createCommand(" 
-    SELECT DISTINCT  i.NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
+    SELECT DISTINCT  i.INSCL_NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
     FROM m_registerdata m
     INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.SUB_FUND NOT IN ('OP_HMAIN' , 'OPAE-DRUG')
-    INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+    INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
     WHERE m.DATEADM BETWEEN '25630601' AND '25630930' AND m.ADJRW_NHSO <> ''
     GROUP BY s.SUB_FUND
      ")->queryAll(); 
@@ -460,10 +508,10 @@ for($i=0;$i<sizeof($trimas3);$i++){
      ############################################################# 
        $connnection = \yii::$app->db1;
        $fiscal = $connnection->createCommand(" 
-      SELECT DISTINCT  i.NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
+      SELECT DISTINCT  i.INSCL_NAME, s.SUB_FUND,m.MAININSCL,COUNT(s.SUB_FUND) AS AMOUNT, SUM(m.ADJRW_NHSO ) AS ADJRW
       FROM m_registerdata m
       INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-      INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+      INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
       WHERE m.DATEADM BETWEEN '25630601' AND '25630930' AND m.ADJRW_NHSO <> ''
       GROUP BY s.SUB_FUND
        ")->queryAll(); 
@@ -482,14 +530,14 @@ for($i=0;$i<sizeof($trimas3);$i++){
   }
        #############################################################           
                 $sql1 = "      
-        SELECT k.HCODE, k.NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
+        SELECT k.HCODE, k.INSCL_NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
         FROM (
         SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
         s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-        m.ADJRW_NHSO, m.DRG_NHSO, i.NAME
+        m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME
         FROM m_registerdata m
         INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-        INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+        INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
         WHERE m.DATEADM BETWEEN '25621001' AND '25630131' AND m.ADJRW_NHSO <> '')as k
         GROUP BY k.SUB_FUND
                         ";
@@ -507,14 +555,14 @@ for($i=0;$i<sizeof($trimas3);$i++){
                         ]);                
 
     $sql2 = "      
-        SELECT k.HCODE, k.NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
+        SELECT k.HCODE, k.INSCL_NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
         FROM (
         SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
         s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-        m.ADJRW_NHSO, m.DRG_NHSO, i.NAME
+        m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME
         FROM m_registerdata m
         INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-        INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+        INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
         WHERE m.DATEADM BETWEEN '25630201' AND '25630631' AND m.ADJRW_NHSO <> '' )as k
         GROUP BY k.SUB_FUND
                         ";
@@ -532,14 +580,14 @@ for($i=0;$i<sizeof($trimas3);$i++){
             ]);
                 
                 $sql3 = "      
-        SELECT k.HCODE, k.NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
+        SELECT k.HCODE, k.INSCL_NAME,k.MAININSCL,k.SUB_FUND, COUNT(k.sub_fund) AS AMOUNT ,SUM(k.ADJRW_NHSO) AS ADJRW
         FROM (
         SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
         s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-        m.ADJRW_NHSO, m.DRG_NHSO, i.NAME
+        m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME
         FROM m_registerdata m
         INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-        INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
+        INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
         WHERE m.DATEADM BETWEEN '25630601' AND '25630930' AND m.ADJRW_NHSO <> '')as k
         GROUP BY k.SUB_FUND
                         ";
@@ -556,7 +604,7 @@ for($i=0;$i<sizeof($trimas3);$i++){
                              ],
                         ]);
                              return $this->render('trimas', [
-                                 'searchModel'=> $searchModel,
+                                 //'searchModel'=> $searchModel,
                                  'dataProvider1'=> $dataProvider1,
                                  'dataProvider2'=> $dataProvider2,
                                  'dataProvider3'=> $dataProvider3,
@@ -581,22 +629,22 @@ for($i=0;$i<sizeof($trimas3);$i++){
     public function actionFiscal(){
         $connnection = \yii::$app->db1;
         $fiscal1 = $connnection->createCommand(" 
-        SELECT k.FISCAL, k.NAME , COUNT(k.sub_fund) as AMOUNT, SUM(k.adjrw_nhso) as ADJRW, GROUP_CONCAT(DISTINCT k.sub_fund) as SUBFUND
+        SELECT k.FISCAL, k.INSCL_NAME , COUNT(k.sub_fund) as AMOUNT, SUM(k.adjrw_nhso) as ADJRW, GROUP_CONCAT(DISTINCT k.sub_fund) as SUBFUND
         FROM (
         SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
                     s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-                    m.ADJRW_NHSO, m.DRG_NHSO, i.NAME, IF(MONTH(m.dateadm) >9,YEAR(m.dateadm),YEAR(m.dateadm)) AS FISCAL
+                    m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME, IF(MONTH(m.dateadm) >9,YEAR(m.dateadm),YEAR(m.dateadm)) AS FISCAL
                     FROM m_registerdata m
                     INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-                    INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
-                    WHERE m.DATEADM BETWEEN '25601001' AND '25630930'			
+                    INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
+                    WHERE m.DATEADM BETWEEN '25601001' AND '25640930'			
                   ) as k 
                 GROUP BY k.FISCAL
                 ")->queryAll(); 
         $f1dataProvider = new ArrayDataProvider([
             'allModels'=> $fiscal1,
             'sort'=>[
-               'attributes'=>['FISCAL','NAME','AMOUNT','ADJRW']
+               'attributes'=>['FISCAL','INSCL_NAME','AMOUNT','ADJRW']
            ],
        ]);
    //เตรียมข้อมูลส่งให้กราฟ ไตรมาส1
@@ -611,22 +659,22 @@ for($i=0;$i<sizeof($trimas3);$i++){
       #############################################################  
          $connnection = \yii::$app->db1;
           $fiscal2 = $connnection->createCommand(" 
-          SELECT k.FISCAL, k.NAME ,k.SUB_FUND, COUNT(k.sub_fund) as AMOUNT, SUM(k.adjrw_nhso) as ADJRW
+          SELECT k.FISCAL, k.INSCL_NAME ,k.SUB_FUND, COUNT(k.sub_fund) as AMOUNT, SUM(k.adjrw_nhso) as ADJRW
           FROM (
           SELECT DISTINCT m.HCODE,m.DATEADM, m.PID, m.HN, CONCAT(SUBSTR(m.TITLES,2),'',m.FNAME,' ',m.LNAME) AS FULLNAME , m.MAININSCL,
                       s.SUB_FUND, m.REP, REPLACE(m.SUMS_SERVICEITEM,',','') as SUMS_SERVICEITEM, s.TOTL_AMT,
-                      m.ADJRW_NHSO, m.DRG_NHSO, i.NAME, IF(MONTH(m.dateadm) >9,YEAR(m.dateadm),YEAR(m.dateadm)) AS FISCAL
+                      m.ADJRW_NHSO, m.DRG_NHSO, i.INSCL_NAME, IF(MONTH(m.dateadm) >9,YEAR(m.dateadm),YEAR(m.dateadm)) AS FISCAL
                       FROM m_registerdata m
                       INNER JOIN m_sum_subfund s ON s.tran_id = m.tran_id AND s.ITEM_SOURCE = 'M_REGISTER'
-                      INNER JOIN inscl_nhso i ON i.CODE = m.MAININSCL
-                      WHERE m.DATEADM BETWEEN '25601001' AND '25630930'			
+                      INNER JOIN l_inscl2 i ON i.MAININSCL = m.MAININSCL
+                      WHERE m.DATEADM BETWEEN '25601001' AND '25640930'			
            ) as k 
           GROUP BY k.FISCAL, k.SUB_FUND
           ")->queryAll(); 
           $f2dataProvider = new ArrayDataProvider([
               'allModels'=> $fiscal2,
               'sort'=>[
-                 'attributes'=>['FISCAL','NAME','AMOUNT','ADJRW']
+                 'attributes'=>['FISCAL','INSCL_NAME','AMOUNT','ADJRW']
              ],
          ]);
      //เตรียมข้อมูลส่งให้กราฟ ไตรมาส1
@@ -639,7 +687,7 @@ for($i=0;$i<sizeof($trimas3);$i++){
      }
     ##################################################################
                     return $this->render('fiscal', [
-                        'searchModel'=> $searchModel,
+                       // 'searchModel'=> $searchModel,
                         'f1dataProvider'=> $f1dataProvider,
                         'f2dataProvider'=> $f2dataProvider,
                         'sql1'=> $sql1,

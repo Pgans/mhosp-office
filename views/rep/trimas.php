@@ -69,7 +69,7 @@ $this->title = 'ไตรมาส1';
                                         
                                         [
                                             'label' => 'สิทธิการพยาบาล',
-                                            'attribute' => 'NAME',
+                                            'attribute' => 'INSCL_NAME',
                                             'headerOptions'=>['style'=>'background-color:#FADBD8'],
                                             'pageSummary'=> 'รวม',
                                         ],
@@ -164,7 +164,7 @@ $this->title = 'ไตรมาส1';
                                         [
                                             'class'=>'kartik\grid\FormulaColumn',
                                             'label' => 'สิทธิการพยาบาล',
-                                            'attribute' => 'NAME',
+                                            'attribute' => 'INSCL_NAME',
                                             'headerOptions'=>['style'=>'background-color:#FADBD8'],
                                             'pageSummary'=> 'รวม',
                                         ],
@@ -261,7 +261,7 @@ $this->title = 'ไตรมาส1';
                                         
                                         [
                                             'label' => 'สิทธิการพยาบาล',
-                                            'attribute' => 'NAME',
+                                            'attribute' => 'INSCL_NAME',
                                             'headerOptions'=>['style'=>'background-color:#FADBD8'],
                                             'pageSummary'=> 'รวม',
                                         ],

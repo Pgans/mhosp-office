@@ -1,0 +1,845 @@
+<?php
+
+use kartik\grid\GridView;
+use yii\helpers\Html;
+use kartik\widgets\ActiveForm;
+use yii\helpers\Url;
+use yii\data\ArrayDataProvider;
+use yii\web\View;
+use dosamigos\datepicker\DatePicker;
+use yii\data\ActiveDataProvider;
+//use yii\bootstrap4\Alert;
+use yii\bootstrap\Modal;
+
+
+
+$this->title = 'ข้อมูลการขอ AutenCode';
+//$this->params['breadcrumbs'][] = ['label' => 'รายงาน', 'url' => ['thaimed/index']];
+$this->registerCss('
+    .log-line {
+        padding: 5px;
+    }
+');
+?>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Example</title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconify/iconify@latest/dist/iconify.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<!-- ########################  ตั้งเวลาส่งข้อมูล  ########################################-->
+
+<!--
+    <script type="text/javascript">
+    setTimeout("frmMain.submit();",5000);
+    //5000 อยากได้เร็วก็กำหนดตัวเลขน้อยๆเอานะ // ฟังก์ชันสำหรับส่งฟอร์มอัตโนมัติหลังจาก 5 วินาที (5000 มิลลิวินาที)
+    </script> 
+	
+<!-- ####### สลับสี ###################################### -->
+<style>
+    /* กำหนดสีให้กับแถวที่เป็นเลขคี่ */
+    .my-striped-table tr:nth-child(odd) {
+        background-color: #efefef;
+        /* สีเทาจาง ๆ */
+    }
+
+    /* กำหนดสีให้กับแถวที่เป็นเลขคู่ */
+    .my-striped-table tr:nth-child(even) {
+        background-color: white;
+    }
+</style>
+<style>
+    .custom-hover tbody tr:hover {
+        background-color: #f5f5f5; /* สีที่ต้องการเมื่อ hover */
+    }
+</style>
+<!-- ### ตัวอักษรกระพริบ  ##### -->
+<style>
+    .btn-blink {
+        animation: blink-animation 1s infinite;
+    }
+
+    @keyframes blink-animation {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+</style>
+<!-- <div class="well"> -->
+<!-- <div style="background-color: #126F30; padding: 10px; border: 0px solid #D4F1F5; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);">
+        <font color="white" size="5"><i class='fas fa-bed'></i> ผู้ป่วยนอก UCS 16 แฟ้ม [FDH Telemed]</font>
+        <div style="display: flex; justify-content: flex-end;">
+            <span style="color: yellow;">jhcisdb = db14j(200.14) โรงพยาบาลม่วงสามสิบ</span>
+        </div>
+    </div> -->
+<!-- <h5 style="color: green; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1); padding: 10px;"><i class="fas fa-user"></i> ข้อมูล 16 แฟ้มส่ง Finacail Data Hub </h5> -->
+
+<body>
+    <!--     
+    <script type="text/javascript">
+    setTimeout("frmMain.submit();",50000);
+    //5000 อยากได้เร็วก็กำหนดตัวเลขน้อยๆเอานะ
+    </script> -->
+    <style>
+        /* CSS class with light green background */
+        .visit-element {
+            background-color: lightgreen;
+            padding: 5px;
+            /* Optional padding for spacing */
+            margin-bottom: 5px;
+            /* Optional margin for spacing */
+        }
+    </style>
+    <style>
+        .panel-custom {
+            background-color: #2f1c00;
+            /* สีน้ำตาลเข้ม */
+        }
+
+        .panel-custom .panel-heading {
+            color: #00aaff;
+            /* ตัวหนังสือสีฟ้า */
+        }
+
+        .panel-custom .panel-body {
+            color: #00aaff;
+            /* ตัวหนังสือสีฟ้า */
+        }
+    </style>
+    <style>
+        .panel-custom {
+            max-height: 200px;
+            /* กำหนดขนาดสูงสุดของพาแนล */
+            overflow-y: auto;
+            /* ให้แสดงแถบเลื่อนเมื่อเนื้อหาเกินขนาดที่กำหนด */
+        }
+
+        .panel-body {
+            padding: 10px;
+            /* กำหนดระยะห่างของเนื้อหาภายในพาแนล */
+        }
+    </style>
+    <style>
+        .custom-spinner {
+            border: 16px solid #f3f3f3;
+            /* Light grey */
+            border-top: 16px solid purple;
+            /* Purple */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+
+        .code-block {
+            font-family: "Courier New", Courier, monospace; // ฟอนต์สำหรับโค้ด
+            background-color: #f5f5f5; // สีพื้นหลังอ่อน
+            padding: 10px; // เพิ่มระยะห่างภายใน
+            border: 1px solid #ddd; // ขอบบางๆ
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+	<style>
+        .info-card {
+            background: linear-gradient(to right, #f6c8fa, #a7f3d0); /* Gradient from light green to a bit darker green */
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3); /* Card shadow */
+            color: #000; /* Text color */
+            padding: 20px; /* Padding inside the card */
+            border-radius: 10px; /* Rounded corners */
+            font-size: 16px; /* Font size */
+        }
+    </style>
+    <style>
+        #loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+    </style>
+	<style>
+.my-striped-table tbody tr:hover {
+    background-color: rgba(144, 238, 144, 0.5); /* สีเขียวอ่อนที่โปร่งใส */
+}
+</style>
+    <!-- ############################# แสดงปุ่ม Select All  ################################################################### -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script language="JavaScript">
+        function ClickCheckAll(vol) {
+
+            var i = 1;
+            for (i = 1; i <= document.frmMain.hdnCount.value; i++) {
+                if (vol.checked == true) {
+                    eval("document.frmMain.chkDel" + i + ".checked=true");
+                } else {
+                    eval("document.frmMain.chkDel" + i + ".checked=false");
+                }
+            }
+        }
+    </script>
+    <!-- ############################# แสดงปุ่ม Select All  ################################################################### -->
+    <script>
+        function ClickCheckAll(vol) {
+            // สมมติว่า frmMain เป็นฟอร์มหลัก
+            var checkboxes = document.frmMain.querySelectorAll('input[name="chkDel[]"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = vol.checked; // เลือก/ยกเลิกการเลือกตามช่องหลัก
+            });
+        }
+    </script>
+    <!-- ############################# จบแสดงปุ่ม Select All  ################################################################### -->
+   
+    <div class="row">
+        <div class="col-xl-3 col-md-3 mb-3">
+            <div class="info-card bg-info" style="box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);">
+                <span class="info-box-icon"><i class="far fa-calendar-check" style="color: green;"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text" style="color: green; font-size: 18px;">รายการผ่านวันนี้</span>
+                    <span class="info-box-number"><?php echo $authen ?></span>
+                    <!-- <span class="info-box-number">100</span> -->
+                </div>
+
+                <?php
+                Modal::begin([
+                    'id' => 'myModal',
+                    'header' => '<h4>File List</h4>',
+                    'size' => Modal::SIZE_LARGE,
+                ]);
+                ?>
+                <div id="modal-content">Loading...</div> <!-- เนื้อหาของ modal จะถูกโหลดผ่าน Ajax -->
+                <?php Modal::end(); ?>
+                <?php
+                $this->registerJs("
+                        $('#myModal').on('show.bs.modal', function (event) {
+                            var button = $(event.relatedTarget);
+                            var url = button.data('url');
+                            var modal = $(this);
+
+                            $.ajax({
+                                url: url,
+                                success: function(data) {
+                                    modal.find('#modal-content').html(data); // แสดงเนื้อหาใน Modal
+                                }
+                            });
+                        });
+                    ");
+                ?>
+                <div style="text-align: right;">
+                    <div style="text-align: right;">
+                        <?php
+                        echo Html::a('เปิดอ่านไฟล์', '#', [
+                            'class' => 'btn btn-primary',
+                            'data-toggle' => 'modal',
+                            'data-target' => '#myModal', // เปิด Modal
+                            'data-url' => \yii\helpers\Url::to(['closephysical/list-files-partial']), // URL สำหรับโหลดเนื้อหา
+                        ]);
+                        ?>
+                        <?= Html::a('<i class="fa fa-check-square" aria-hidden="true"></i> ผ่าน', null, ['class' => 'btn btn-success', 'id' => 'link1']) ?>
+                        
+                    </div>
+                </div>
+                </a>
+            </div>
+            <!-- /.info-box -->
+        </div>
+
+        <div class="col-xl-3 col-md-3 mb-3">
+            <div class="info-card bg-warning" style="box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);">
+                <span class="info-box-icon"><i class="fa-sharp fa-solid fa-compass" style="color: red;"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text" style="color: red; font-size: 14px;">คงเหลือ</span>
+                    <span class="info-box-number"><?php echo $noauthen ?></span>
+
+                </div>
+
+               <div style="text-align: right;">
+                <a href="<?= Url::to(['authen/run-curl']) ?>" class="btn btn-info" style="font-size: 16px;">
+                                    Token-Pgans <i class="fa fa-arrow-circle-right"></i>
+                                </a>
+						
+
+                    <?= Html::a('<i class="fa fa-ban" aria-hidden="true"></i> ไม่ผ่าน', null, ['class' => 'btn btn-danger', 'id' => 'link2']) ?>
+                    
+                </div>
+                </a>
+            </div>
+        </div>
+
+
+        <div class="col-xl-3 col-md-3 mb-3">
+            <div class="info-card bg-warning" style="box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);">
+                <span class="info-box-icon"><i class="fas fa-hand-holding-heart" style="color: orange;"></i></i></span>
+                <div class="info-box-content">
+
+                    <span class="info-box-number" style="color: green; font-size: 18px;">ลิงค์เข้าเว็บ FDH</span>
+
+                    <a href="https://uat-fdh.inet.co.th/hospital/detail" target="_blank">FDH-UAT</a>--
+                    <a href="https://fdh.moph.go.th/hospital/" target="_blank">FDH-Production</a><br>
+                    
+                    
+                    <!-- ลิงก์ที่เรียกใช้ JavaScript เพื่อเปิดป๊อปอัป -->
+                    <!-- <div class="text-center">
+                            <a href="javascript:void(0);" id="exportExcelButton" class="btn btn-primary" style="font-size: 16px; border: 4px solid #91ffff;" onclick="openPopup();">
+                                รายชื่อและส่งออก ExcelFiles <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div> -->
+
+                    <script>
+                        function openPopup() {
+                            const url = "<?= \yii\helpers\Url::to(['closephysical/exportexcel']); ?>"; // ลิงก์ไปยังไฟล์ Excel
+                            const popupWindow = window.open(url, 'ExcelPopup', 'width=600,height=400'); // สร้างหน้าต่างป๊อปอัป
+                            popupWindow.focus(); // โฟกัสไปยังป๊อปอัป
+                        }
+                    </script>
+
+
+                    <a href="<?= \yii\helpers\Url::to(['fdhhurb/index']) ?>" class="btn btn-warning modalLink" style="font-size: 16px;" target="_blank">
+                        Query <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                      <!-- <?= Html::a('Export', ['closefdh/exports'], ['class' => 'btn btn-success']) ?>-->
+					  <!-- ปุ่ม -->
+<?= Html::button('📤 ส่งออก Text', [
+    'value' => Url::to(['authen/export-authen']),
+    'class' => 'btn btn-success',
+    'id' => 'modalButtonExport',
+	 'disabled' => !$isAllowed,
+]) ?>
+<?php
+$currentUser = Yii::$app->user->identity->user_id ?? null;
+$isAllowed = ($currentUser === '3341400051241');
+?>
+<?= Html::button('📥 นำเข้า Text', [
+    'value' => Url::to(['authen/import-authen']),
+    'class' => 'btn btn-primary',
+	'id' => 'modalButtonImport',
+    'disabled' => !$isAllowed,
+]) ?>
+
+
+<!-- Modal สำหรับ Export -->
+<?php
+Modal::begin([
+    'header' => '<h4><i class="fa fa-upload"></i> ส่งออกข้อมูล</h4>',
+    'id' => 'modalExport',
+    'size' => 'modal-lg',
+]);
+echo "<div id='modalContentExport'></div>";
+Modal::end();
+?>
+
+<!-- Modal สำหรับ Import -->
+<?php
+Modal::begin([
+    'header' => '<h4><i class="fa fa-download"></i> นำเข้าข้อมูล</h4>',
+    'id' => 'modalImport',
+    'size' => 'modal-lg',
+]);
+echo "<div id='modalContentImport'></div>";
+Modal::end();
+?>
+
+<?php
+$script = <<<JS
+// เมื่อคลิกปุ่ม Export
+$('#modalButtonExport').click(function(){
+    $('#modalExport').modal('show')
+        .find('#modalContentExport')
+        .load($(this).attr('value'));
+});
+
+// เมื่อคลิกปุ่ม Import
+$('#modalButtonImport').click(function(){
+    $('#modalImport').modal('show')
+        .find('#modalContentImport')
+        .load($(this).attr('value'));
+});
+JS;
+$this->registerJs($script);
+?>
+					   
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-3 mb-3">
+            <div class="info-card bg-info" style="box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3); width: 350px; height: 140px;">
+
+            <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-3">
+        <span class="info-box-text" style="color: green; font-size: 18px;">ยอดบริการ <?php echo "ทั้งหมด:$todayopd "; ?>ราย</span>
+					<span class="info-box-number">
+						<?php
+echo "<a>ขอAuthen:</a> <span style='color:green;'>$authen</span> | ";
+echo "<a href='index.php?r=authen/index' style='color:orange;'>เหลือ: $noauthen</a>";
+?>
+
+					<div>
+					<?php echo "<a>ต่างด้าว:</a> <span style='color:green;'>$alien</span>"; ?> |
+					<!--<?php echo "<a>hw:</a><span style='color:green;'>$homeward</span>"; ?>-->
+			        <?php echo "<a>admit:</a><span style='color:green;'>$todayipd</span>"; ?>
+					 <?php echo "<a>hd:</a><span style='color:green;'>$hd</span>"; ?>
+					</div>
+					</div>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+	
+
+
+    <!-- ############################################ Grid View ######################################################################## -->
+ 	<!-- Hidden fields สำหรับเก็บวันที่ -->
+				<?= Html::hiddenInput('date1', $date1) ?>
+				<?= Html::hiddenInput('date2', $date2) ?> 
+
+<style>
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #28a745;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.status-text {
+    color: #666;
+    font-size: 13px;
+}
+
+.status-text.active {
+    color: #28a745;
+}
+
+.status-text.inactive {
+    color: #dc3545;
+}
+</style>
+
+<script type="text/javascript">
+    var autoSubmitTimer;
+    var autoSubmitEnabled = true; // เปิด Auto Submit ตั้งแต่เริ่ม
+
+    function startAutoSubmit() {
+        if (autoSubmitEnabled) {
+            autoSubmitTimer = setTimeout(function() {
+                document.frmMain.submit();
+            }, 5000);
+        }
+    }
+
+    function stopAutoSubmit() {
+        if (autoSubmitTimer) {
+            clearTimeout(autoSubmitTimer);
+        }
+    }
+
+    function toggleAutoSubmit(checkbox) {
+        autoSubmitEnabled = checkbox.checked;
+        var statusText = document.getElementById('statusText');
+        
+        if (autoSubmitEnabled) {
+            startAutoSubmit();
+            statusText.textContent = 'เปิดใช้งาน - ส่งฟอร์มอัตโนมัติทุก 10 วินาที';
+            statusText.className = 'status-text active';
+        } else {
+            stopAutoSubmit();
+            statusText.textContent = 'ปิดใช้งาน - ไม่ส่งฟอร์มอัตโนมัติ';
+            statusText.className = 'status-text inactive';
+        }
+    }
+
+    window.onload = function() {
+        document.getElementById('autoSubmitToggle').checked = true; 
+        startAutoSubmit();
+        document.getElementById('statusText').textContent = 'เปิดใช้งาน - ส่งฟอร์มอัตโนมัติทุก 10 วินาที';
+        document.getElementById('statusText').className = 'status-text active';
+    };
+</script>
+
+<div class="toggle-container">
+    <span class="toggle-label">Auto Submit:</span>
+    <label class="toggle-switch">
+        <input type="checkbox" id="autoSubmitToggle" onchange="toggleAutoSubmit(this)">
+        <span class="slider"></span>
+    </label>
+    <span id="statusText" class="status-text inactive">ปิดใช้งาน - ไม่ส่งฟอร์มอัตโนมัติ</span>
+</div>
+
+
+<?= Html::beginForm(['autheny/check'], 'post', ['name' => 'frmMain']); ?>
+<input name="btnButton1" class="btn btn-success btn btn-block" id="selectAll" type="submit" name="selectAll" value="ขอ AuthenCode" style="background-color: #fb5200; border: 4px solid #dadada;">
+
+<div style="overflow: auto; height: 600px; border: 1px solid #ddd;">
+    <table class="table my-striped-table" width="1000" border="0" bordercolor="#ddd" 
+        style="border-collapse: collapse; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">
+        <thead style="position: sticky; top: 0; background-color: #fff; z-index: 1;">
+            <tr>
+                <th width="30" style="background-color: lightgray;">
+                    <div align="center">
+                        <input name="CheckAll" type="checkbox" id="CheckAll" value="Y" onClick="ClickCheckAll(this);">
+                    </div>
+                </th>
+                <th>#</th>
+                <th>วันที่</th>
+                <th>เลขบริการ</th>
+                <th>cid</th>
+                <th>Authen</th>
+                <th>Enpoint</th>
+                <th>Hn</th>
+                <th>ชื่อ-สกุล</th>
+                <th>อายุ</th>
+                <th>แผนก</th>
+                <th>สิทธิ์</th>
+                <th>โทรคนไข้</th>
+                <th>โทรญาติ</th>
+                <th>ขอ authen</th>
+                <th>ดึงข้อมูล</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($visitProvider && $visitProvider->getCount() > 0): ?>
+                <?php foreach ($visitProvider->getModels() as $key => $value) : ?>
+                    <tr>
+                        <td><input type="checkbox" name="chkDel[]" <?php echo 'checked'; ?> id="chkDel<?= $i; ?>" value="<?php echo $value["visit"]; ?><?php echo $value["hn"]; ?>"></td>
+                        <td><?= $value["No"]; ?></td>
+                        <td><?= $value["regdate"]; ?></td>
+                        <td><?= $value["visit"]; ?></td>
+                        <td><?= $value["cid"]; ?></td>
+                        <td style="color: orange;"><?= $value["claimKiosk"]; ?></td>
+                        <td style="color: green;"><?= $value["enpoint"]; ?></td>
+                        <td><?= $value["hn"]; ?></td>
+                        <td><?= $value["fullname"]; ?></td>
+                        <td><?= $value["age"]; ?></td>
+                        <td><?= $value["unit_name"]; ?></td>
+                        <td><?= $value["inscl_name"]; ?></td>
+                        <?php
+                            $phone = $value["telephone"];
+                            $color = (strlen($phone) == 10) ? "green" : "red";
+                        ?>
+                        <td style="color: <?= $color ?>;"><?= htmlspecialchars($phone) ?></td>
+                        <?php
+                            $phone = $value["rl_phone"];
+                            $color = (strlen($phone) == 10) ? "#117d99" : "red";
+                        ?>
+                        <td style="color: <?= $color ?>;"><?= htmlspecialchars($phone) ?></td>
+                        <td><?= $value["inscl_name"]; ?></td>
+                        <td></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="16">ไม่พบข้อมูล</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+<?= Html::endForm() ?>
+
+
+<p>
+    <?= Html::a('⏪ กลับหน้าหลัก', ['closeall/index'], [
+        'class' => 'btn btn-custom'
+    ]) ?>
+</p>
+
+<?php
+$this->registerCss("
+    .btn-custom {
+        background: linear-gradient(145deg, #e6e6e6, #ffffff);
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        text-shadow: 1px 1px 1px rgba(255,255,255,0.6);
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.7);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-custom:hover {
+        background: linear-gradient(145deg, #ffffff, #e6e6e6);
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), -2px -2px 4px rgba(255, 255, 255, 0.7);
+        transform: scale(1.05);
+    }
+
+    .btn-custom:active {
+        box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+        transform: scale(0.98);
+    }
+");
+?>
+
+<!-- ###################################################################################################### -->
+ <script>
+    function ClickCheckAll(vol) {
+        var i;
+        for (i = 0; i < document.frmMain.elements.length; i++) {
+            if (document.frmMain.elements[i].name == "chkDel[]") {
+                document.frmMain.elements[i].checked = vol.checked;
+            }
+        }
+    }
+
+    // Function to handle form submission with row processing
+    document.querySelector('form[name="frmMain"]').addEventListener('submit', function(event) {
+        var rows = document.querySelectorAll('table.table-striped tr');
+        var checkedRows = document.querySelectorAll('input[name="chkDel[]"]:checked');
+        var count = checkedRows.length;
+        var scrollContainer = document.getElementById('scrollContainer');
+
+        if (count > 0) {
+            var currentIndex = 0;
+
+            function processRow() {
+                if (currentIndex < count) {
+                    var row = checkedRows[currentIndex].closest('tr');
+                    var originalBackgroundColor = row.style.backgroundColor;
+                    row.style.backgroundColor = '#F8B6F6'; // Set processing background color
+
+                    // Scroll the row into view
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+
+                    // Simulate API call or other processing
+                    setTimeout(function() {
+                        // Example: Update row style back to original color
+                        row.style.backgroundColor = originalBackgroundColor;
+
+                        // Move to the next row
+                        currentIndex++;
+                        processRow();
+                    }, 1000); // Simulate delay for demonstration
+                } else {
+                    // Finish processing
+                  // alert('API ตรวจสอบข้อมูลเรียบร้อย.');
+
+                    // Submit the form
+                    document.frmMain.submit();
+                }
+            }
+
+            // Start processing rows
+            processRow();
+        } else {
+            // No rows selected
+          //  alert('Please select rows to process.');
+        }
+
+        // Prevent form submission
+        event.preventDefault();
+    });
+</script>
+
+<!-- ########################################################################################## -->
+
+
+<!-- ############################ Setflash Alert 5 วินาที ######################################################### -->
+<script>
+    // Automatically hide success and error messages after 15 seconds
+    setTimeout(function() {
+        $('.alert').slideUp('slow');
+    }, 15000);
+</script>
+<!-- ################################################################################################################## -->
+<?php
+
+$this->registerJs('
+  jQuery("#btn-delete").click(function(){
+    var keys = $("#w0").yiiGridView("getSelectedRows");
+    console.log(keys);
+    if(keys.length>0){
+      jQuery.post("' . Url::to(['delete-all']) . '",{ids:keys},function(){
+      });
+    }
+  });
+');
+?>
+
+
+<script>
+    $(document).ready(function() {
+        var tableWrapper = $('.table-wrapper');
+        var tableHeight = 200; // กำหนดความสูงของพื้นที่ Scrollbar
+
+        tableWrapper.css({
+            'max-height': tableHeight,
+            'overflow-y': 'auto',
+            'overflow-x': 'hidden'
+        });
+
+        // Fix header when scrolling
+        var headerClone = tableWrapper.find('thead').clone(); // Clone the table header
+        var fixedHeader = $('<div>').addClass('fixed-header'); // Create a fixed header container
+
+        fixedHeader.append(headerClone); // Append the cloned header to fixed container
+        fixedHeader.css({
+            'position': 'sticky',
+            'top': 0,
+            'background-color': '#009700', // ให้สีตรงกับสีของส่วนหัว
+            'z-index': 1000
+        });
+
+        tableWrapper.prepend(fixedHeader); // Add the fixed header to the wrapper
+    });
+</script>
+
+<!-- ############################## ERROR ################################################################# -->
+<div id="model2" style="display: none;">
+    <h2 style="color: #ff0000; border: 2px solid #c3e6cb; padding: 5px;">แสดงรายการไม่ผ่าน</h2>
+
+    <?= \yii\grid\GridView::widget([
+        'tableOptions' => [
+            'class' => 'table table-striped table-hover1',
+            'width' => '100%',
+            'cellspacing' => '1'
+        ],
+        'dataProvider' => $errorProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            'visit_id',
+            'pid',
+            'users',
+            'response',
+            'd_update',
+        ],
+        'headerRowOptions' => ['style' => 'background-color: #ff5eae; color: white;'],
+        'rowOptions' => ['style' => 'background-color: #ffb3b3; color: #ff0000;'],
+    ]); ?>
+</div>
+
+</div>
+</div>
+
+
+<!-- สคริปต์ jQuery เพื่อแสดง/ซ่อนข้อมูลเมื่อคลิกที่ลิงค์ -->
+<?php
+$this->registerJs("
+    $('#link1').click(function(){
+        $('#model1').show();
+        $('#model2').hide();
+    });
+
+    $('#link2').click(function(){
+        $('#model1').hide();
+        $('#model2').show();
+    });
+");
+?>
+<script>
+    $(document).ready(function() {
+        $('.popup-link').click(function(e) {
+            e.preventDefault();
+            var url = $(this).data('url');
+            openModalWithData(url);
+        });
+
+        $('#selectAll').click(function() {
+            // Show the spinner when the button is clicked
+            $('#loading-spinner').show();
+        });
+
+        // Assuming you have a form with the class 'your-form-class'
+        $(document).on('beforeSubmit', 'form[name="frmMain"]', function() {
+            // Show the spinner before form submission
+            $('#loading-spinner').show();
+            return true;
+        });
+
+        // If you're using Pjax, hide the spinner on successful Pjax response
+        $(document).on('pjax:success', function() {
+            $('#loading-spinner').hide();
+        });
+
+        // If you're not using Pjax, hide the spinner on any AJAX request completion
+        $(document).ajaxStop(function() {
+            $('#loading-spinner').hide();
+        });
+    });
+
+    function openModalWithData(url) {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('#myModal .modal-body').html(response);
+                $('#myModal').modal('show');
+            },
+            error: function() {
+                alert('An error occurred while fetching data.');
+            }
+        });
+    }
+</script>

@@ -35,7 +35,7 @@ echo GridView::widget([
                 },       
                     ],
                     [
-                        'attribute' => 'NAME',
+                        'attribute' => 'INSCL_NAME',
                         'label'=>'สิทธิการพยาบาล',
                        'headerOptions'=>[ 'style'=>'background-color:#FADBD8'] ,
                        

@@ -2,103 +2,107 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use Yii;
+
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $auth_key
+ * @property string $password_hash
+ * @property string $password_reset_token
+ * @property string $email
+ * @property int $status
+ * @property string $level_user สิทธิ์
+ * @property int $created_at
+ * @property int $updated_at
+ * @property string $unconfirmed_email
+ * @property string $registration_ip
+ * @property int $blocked_at
+ * @property int $flags
+ * @property int $last_login_at
+ * @property int $confirmed_at
+ *
+ * @property History[] $histories
+ * @property Person[] $people
+ */
+class User extends \yii\db\ActiveRecord
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
+    public $firstname;
+    public $lastname;
 
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
-
+    public static function tableName()
+    {
+        return 'user';
+    }
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+ 
+    /* เพิ่มเติม const ลงไป */
+    const ROLE_USER = 'USER';
+    const ROLE_EMPLOYEE = 'EMPLOYEE';
+    const ROLE_ADMIN = 'ADMIN';
     /**
      * {@inheritdoc}
      */
-    public static function findIdentity($id)
+    public function rules()
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return [
+            [['username', 'auth_key', 'password_hash', 'email', 'level_user', 'created_at', 'updated_at'], 'required'],
+            [['status', 'created_at', 'updated_at', 'blocked_at', 'flags', 'last_login_at', 'confirmed_at'], 'integer'],
+            [['level_user'], 'string'],
+            [['username', 'password_hash', 'password_reset_token', 'email', 'unconfirmed_email'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['registration_ip'], 'string', 'max' => 45],
+            [['username'], 'unique'],
+            [['email'], 'unique'],
+            [['password_reset_token'], 'unique'],
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function attributeLabels()
     {
-        return $this->id;
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'auth_key' => 'Auth Key',
+            'password_hash' => 'Password Hash',
+            'password_reset_token' => 'Password Reset Token',
+            'email' => 'Email',
+            'status' => 'Status',
+            'level_user' => 'Level User',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'unconfirmed_email' => 'Unconfirmed Email',
+            'registration_ip' => 'Registration Ip',
+            'blocked_at' => 'Blocked At',
+            'flags' => 'Flags',
+            'last_login_at' => 'Last Login At',
+            'confirmed_at' => 'Confirmed At',
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @return \yii\db\ActiveQuery
      */
-    public function getAuthKey()
+    public function getHistories()
     {
-        return $this->authKey;
+        return $this->hasMany(History::className(), ['created_by' => 'id']);
     }
 
     /**
-     * {@inheritdoc}
+     * @return \yii\db\ActiveQuery
      */
-    public function validateAuthKey($authKey)
+    public function getPeople()
     {
-        return $this->authKey === $authKey;
+        return $this->hasMany(Person::className(), ['user_id' => 'id']);
     }
-
-    /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
-     */
-    public function validatePassword($password)
+	public function getPerson()
     {
-        return $this->password === $password;
+        return $this->hasOne(Person::class, ['user_id' => 'id']);
     }
 }

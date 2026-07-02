@@ -1,0 +1,49 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\Repimport */
+/* @var $form yii\widgets\ActiveForm */
+?>
+
+<div class="repimport-form">
+
+    <?php $form = ActiveForm::begin(); ?>
+	
+    <?= $form->field($model, 'rep')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'id')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'train_id')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'hn')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'an')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'pid')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'fullname')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'main')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'regdate')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'discharge')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'ins')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'pp')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'errorcode')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'sub')->textInput(['maxlength' => true]) ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
+</div>
